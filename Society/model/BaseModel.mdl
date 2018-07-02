@@ -1,126 +1,71 @@
 {
-	"StartCondition" : {
-		"Agent" : [
-			{
-				"id" : "farmer001",
-				"type" : "CommonPerson"
-			}
-		],
-		"Structure" : [
-			{
-				"id" : "farm001",
-				"type" : "Farm"
-			},
-			{
-				"id" : "farmland001",
-				"type" : "FarmLand"
-			}
-		],
-		"FacilitySet" : [
-			{
-				"id" : "farmland001",
-				"to" : "farm001"
-			}
-		]
+  "District" : {
+    "name" : ,
+    "type" : "",
+    "builtIn": [
 
-	},
-	"Agent" : [
-		{
-			"id" : "CommonPerson",
-			"name" : "person",
-			"parentType" : "Agent",
-			"description" : "?",
-			"inventorySize" : 10,
-			"Properties" : [
-				{
-					"name" : "WorkForce",
-					"type" : "intValue",
-					"initValue" : 100,
-					"minValue" : 0,
-					"maxValue" : 100
-				}
-			]
-		}
-	],
-
-	"Structure" : [
-		{
-			"id" : "Farm",
-			"name" : "farm",
-			"parentType" : "Structure",
-			"description" : "?",
-			"area" : 10,
-			"work" : "none",
-			"inventorySize" : 10,
-			"fieldSize" : 100,
-			"buildable" : [
-						"FarmLand"
-			]
-		},
-		{
-			"id" : "FarmLand",
-			"name" : "FarmLand",
-			"parentType" : "Structure",
-			"description" : "?",
-			"area" : 10,
-			"work" : "BaseFarmLandWork",
-			"inventorySize" : 10,
-			"fieldSize" : 0,
-			"Properties" : [
-				{
-					"name" : "Growth",
-					"type" : "floatValue",
-					"initValue" : 0,
-					"minValue" : 0,
-					"maxValue" : 10
-				}
-			]
-		}
-	],
-	"Work" : [
-		{
-			"id" : "GrowthWork",
-			"name" : "FarmlandGrowthWork",
-			"worker" : "Agent",
-			"target" : "FarmLand",
-      		"rule" : "growthRule"
-		},
-		{
-			"id" : "BaseHarvestWork",
-			"name" : "Harvest",
-			"worker" : "Agent",
-			"target" : "FarmLand",
-			"rule" : ""
-		}
-	],
-	"Rule" : [
-		{
-			"id" : "growthRule",
-			
-      		"condition" : "worker/WorkForce >= 1",
-      		"arguments" : [
-         	 	"skillRank",
-         	 	"toolRank"
-			],
-      		"resultSet" : [
-          		{
-            		"targetValue" : "target/Growth",
-            		"evaluate" : "target/Growth = target/Growth + 1 * (skillRank + toolRank)"
-          		},
-          		{
-            		"targetValue" : "worker/WorkForce",
-            		"evaluate" : "worker/WorkForce = worker/WorkForce - 1"
-          		}
-    		]
-    	}
     ],
-	"Item" : [
-		{
-			"id" : "Wheat",
-			"name" : "Wheat",
-			"description" : "?",
-			"size" : 5,
-			"parentType" : "Item"
-		}
-	]
+    "condition" : "",
+    "climateProperty" : "cp001",
+    "safety" :
+  },
+  "ClimateProperty" : {
+    "temperature" : ,
+    "hasTree" :,
+    "amountOfWater" : ,
+  },
+
+  "Structure" : {
+    "name" : ,
+    "builtIn" : [
+
+    ],
+    "hasPropertySet" : [
+      {
+        "PropertySetClass" : ,
+        "PropertySet" : "propertySet001"
+      }
+      {
+        "propertySetClass" : "Inventory",
+        "propertySet" : "inventory001"
+      }
+    ],
+
+  },
+  "Inventory" : {
+
+  },
+  "Item" : {
+    "name" :,
+    "stored" :,
+    "hasPropertySet" : [
+      {
+        "propertySetClass" : "Edible",
+        "propertySet" : "edible001"
+      }
+    ]
+
+  },
+
+  "edible001" : {
+    "satiety" : ,
+    "energy" : ,
+  },
+
+  "Agent" : {
+
+  },
+  "Equipment" : {
+
+  },
+  "Work" : {
+
+  },
+  "Rule" : {
+    "type" : "",
+  },
+  "Condition" : {
+
+  }
+
 }
