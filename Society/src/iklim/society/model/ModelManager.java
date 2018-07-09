@@ -1,12 +1,21 @@
 package iklim.society.model;
 
-import iklim.society.model.base.*;
-import iklim.society.model.base.property.*;
-import iklim.society.model.instance.*;
-import iklim.society.model.instance.property.*;
-
 import java.util.HashMap;
 import java.util.Map.Entry;
+
+import iklim.society.model.base.AbstractBaseModel;
+import iklim.society.model.base.BaseAgent;
+import iklim.society.model.base.BaseCapabilityProperty;
+import iklim.society.model.base.BaseItem;
+import iklim.society.model.base.BasePropertySet;
+import iklim.society.model.base.BaseState;
+import iklim.society.model.base.BaseStructure;
+import iklim.society.model.base.BaseWork;
+import iklim.society.model.base.rule.Rule;
+import iklim.society.model.instance.AbstractModelInstance;
+import iklim.society.model.instance.Agent;
+import iklim.society.model.instance.Structure;
+import iklim.society.model.instance.property.PropertyInstance;
 
 public class ModelManager {
 	private static ModelManager 			instance;
@@ -59,19 +68,19 @@ public class ModelManager {
 	}
 
 	public void addStructureModel(BaseStructure s) {
-		staticBaseModel.put(s.id, s);
+		staticBaseModel.put(s.getId(), s);
 	}
 
 	public void addWorkModel(BaseWork w) {
-		staticBaseModel.put(w.id, w);
+		staticBaseModel.put(w.getId(), w);
 	}
 	
 	public void addAgentModel(BaseAgent a) {
-		staticBaseModel.put(a.id, a);
+		staticBaseModel.put(a.getId(), a);
 	}
 	
 	public void addItemModel(BaseItem i){
-		staticBaseModel.put(i.id, i);
+		staticBaseModel.put(i.getId(), i);
 	}
 	
 	public void addStructureInstance(String id, String type) {
@@ -86,13 +95,6 @@ public class ModelManager {
 	
 	public void addPropertyInstance(String id, String type) {
 		
-	}
-
-	public void setFacility(String child, String parent) {
-		Structure parentStructure = instanceStructureModel.get(parent);
-		Structure childStructure = instanceStructureModel.get(child);
-		parentStructure.addFacility(childStructure);
-		childStructure.setParent(parentStructure);
 	}
 
 	public void printInstance() {
@@ -145,5 +147,25 @@ public class ModelManager {
 
 	public AbstractBaseModel getItemModel(String itemType) {
 		return (BaseItem)this.getBaseModel(itemType);
+	}
+
+	public void addPropertySetModel(BasePropertySet buildPropertySetModel) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addStateModel(BaseState buildStateModel) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addCapabilityPropertyModel(BaseCapabilityProperty buildCapabilityPropertyModel) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addRuleModel(Rule buildRuleModel) {
+		// TODO Auto-generated method stub
+		
 	}
 }
