@@ -24,11 +24,24 @@ public abstract class AbstractExecutable extends AbstractBaseModel {
 	public LinkedList<Precondition> getPrecondition() {
 		return precondition;
 	}
+	
+	public void setPrecondition(LinkedList<Precondition> precondition) {
+		this.precondition = precondition;
+	}
+
 	public void appendArgument(BaseArgument arg) {
 		String name = arg.getName();
 		argument.put(name, arg);
 	}
 	
+	public HashMap<String, BaseArgument> getArgument() {
+		return argument;
+	}
+
+	public void setArgument(HashMap<String, BaseArgument> argument) {
+		this.argument = argument;
+	}
+
 	public boolean isExecutable(String worker, String target, Argument ...args) {
 		for(Argument a : args) {
 			if(!argument.containsKey(a.getName())) {

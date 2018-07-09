@@ -1,6 +1,8 @@
 package iklim.society.model;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map.Entry;
 
 import iklim.society.model.base.AbstractBaseModel;
@@ -26,6 +28,9 @@ public class ModelManager {
 	private HashMap<String, Structure>		instanceStructureModel;
 	private HashMap<String, PropertyInstance> instanceProperty;
 	
+	private HashMap<String, Rule> ruleModel;
+	private HashMap<String, LinkedList<String>> ruleEffectWorkManager;
+	
 	private ModelManager() {
 		staticBaseModel = new HashMap<String, AbstractBaseModel>();
 		
@@ -37,6 +42,30 @@ public class ModelManager {
 		
 	}
 	
+	
+	
+	public HashMap<String, LinkedList<String>> getRuleEffectWorkManager() {
+		return ruleEffectWorkManager;
+	}
+
+	public void setRuleEffectWorkManager(HashMap<String, LinkedList<String>> ruleEffectWorkManager) {
+		this.ruleEffectWorkManager = ruleEffectWorkManager;
+	}
+
+	public HashMap<String, Rule> getRuleModel() {
+		return ruleModel;
+	}
+
+	public void setRuleModel(HashMap<String, Rule> ruleModel) {
+		this.ruleModel = ruleModel;
+	}
+	
+	public Collection<Rule> getRules() {
+		return ruleModel.values();
+	}
+
+
+
 	private void initialize() {
 //		BaseAgent a = new BaseAgent();
 //		a.id = "Agent";

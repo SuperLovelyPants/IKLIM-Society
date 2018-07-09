@@ -16,11 +16,15 @@ public class Rule extends AbstractExecutable{
 	private HashMap<String, Parameter>			params;
 	private LinkedList<RuleFactor>				factors;
 	private Evaluator							evaluator;
+	
+	private String								targetValue;
+	private LinkedList<String>					trigger;
 
 	public Rule() {
 		effectWorks = new LinkedList<String>();
 		params = new HashMap<String, Parameter>();
-		factors = new LinkedList<>();
+		factors = new LinkedList<RuleFactor>();
+		trigger = new LinkedList<String>();
 	}
 	
 	public void putParameter(Parameter param) {
@@ -49,6 +53,13 @@ public class Rule extends AbstractExecutable{
 		return effectWorks;
 	}
 	
+	public String getTargetValue() {
+		return targetValue;
+	}
+
+	public void setTargetValue(String targetValue) {
+		this.targetValue = targetValue;
+	}
 
 	public LinkedList<String> getEffectWorks() {
 		return effectWorks;
@@ -81,5 +92,15 @@ public class Rule extends AbstractExecutable{
 	public void setEvaluator(Evaluator evaluator) {
 		this.evaluator = evaluator;
 	}
+
+	public LinkedList<String> getTrigger() {
+		return trigger;
+	}
+
+	public void setTrigger(LinkedList<String> trigger) {
+		this.trigger = trigger;
+	}
+	
+	
 	
 }

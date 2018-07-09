@@ -39,7 +39,10 @@ public class ModelReader {
 			buildPropertySet(root.get(ModelScheme.ObjectPropertySet).getAsJsonArray(), manager);
 			buildState(root.get(ModelScheme.ObjectState).getAsJsonArray(), manager);
 			buildCapabilityProperty(root.get(ModelScheme.ObjectCapabilityProperty).getAsJsonArray(), manager);
+			
 			buildRule(root.get(ModelScheme.ObjectRule).getAsJsonArray(), manager);
+			effectWorkCheck(manager);
+	
 			buildWork(root.get(ModelScheme.ObjectWork).getAsJsonArray(), manager);
 			buildItem(root.get(ModelScheme.ObjectItem).getAsJsonArray(), manager);
 			buildStructure(root.get(ModelScheme.ObjectStructure).getAsJsonArray(), manager);
@@ -132,18 +135,39 @@ public class ModelReader {
 	private static void buildRule(JsonArray joRule, ModelManager manager) {
 		for (JsonElement ruleElement : joRule) {
 			JsonObject ruleObject = ruleElement.getAsJsonObject();
-			manager.addRuleModel(buildRuleModel(ruleObject));
+			manager.addRuleModel(buildRuleModel(ruleObject, manager));
 		}
 	}
 	
-	private static Rule buildRuleModel(JsonObject ruleObject) {
+	private static Rule buildRuleModel(JsonObject ruleObject, ModelManager manager) {
 		Rule rule = new Rule();
 		rule.setId(id);
 		rule.setName(name);
 		rule.setParent(parent);
-		rule.set
+		rule.setEvaluator(evaluator);
+		rule.setTargetValue(targetValue);
+		
+		JsonArray triggers = ruleObject.get(ModelScheme.PropertyTrigger).getAsJsonArray();
+		for (JsonElement triggerElement : triggers) {
+			String trigger = triggerElement.getAsString();
+			LinkedList<String> triggerList = manager.getRuleEffectWorkManager().get(trigger);
+			if(triggerList == null) {
+				manager.getRuleEffectWorkManager().put(trigger, id);
+			} else {
+				triggerList.add(id);
+			}
+		}
+		
 		
 		return rule;
+	}
+	
+	private static void effectWorkCheck(ModelManager manager) {
+		
+		for (Rule rule : manager.getRules()) {
+			rule.setEffectWorks(manager.getRuleEffectWorkManager().get(rule.getTargetValue()));
+		}
+		
 	}
 	
 	private static void buildWork(JsonArray joWork, ModelManager manager) {

@@ -53,6 +53,7 @@ public class ModelScheme {
 	public static final String PropertyStateRule			= "stateRule";
 	public static final String PropertyStates				= "states";
 	public static final String PropertyCapable				= "capable";
+	public static final String PropertyTrigger				= "trigger";
 	
 	public static final String PropertySet					= "propertySet";
 	
