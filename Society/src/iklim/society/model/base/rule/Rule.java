@@ -16,7 +16,6 @@ public class Rule extends AbstractExecutable{
 	private HashMap<String, Parameter>			params;
 	private LinkedList<RuleFactor>				factors;
 	private Evaluator							evaluator;
-	
 
 	public Rule() {
 		effectWorks = new LinkedList<String>();
@@ -48,6 +47,39 @@ public class Rule extends AbstractExecutable{
 		
 		
 		return effectWorks;
+	}
+	
+
+	public LinkedList<String> getEffectWorks() {
+		return effectWorks;
+	}
+
+	public void setEffectWorks(LinkedList<String> effectWorks) {
+		this.effectWorks = effectWorks;
+	}
+
+	public HashMap<String, Parameter> getParams() {
+		return params;
+	}
+
+	public void setParams(HashMap<String, Parameter> params) {
+		this.params = params;
+	}
+
+	public LinkedList<RuleFactor> getFactors() {
+		return factors;
+	}
+
+	public void setFactors(LinkedList<RuleFactor> factors) {
+		this.factors = factors;
+	}
+
+	public Evaluator getEvaluator() {
+		return evaluator;
+	}
+
+	public void setEvaluator(Evaluator evaluator) {
+		this.evaluator = evaluator;
 	}
 	
 }
