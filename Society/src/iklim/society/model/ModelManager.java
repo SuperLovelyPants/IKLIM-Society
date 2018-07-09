@@ -15,41 +15,41 @@ public class ModelManager {
 	
 	private HashMap<String, Agent>			instanceAgentModel;
 	private HashMap<String, Structure>		instanceStructureModel;
+	private HashMap<String, PropertyInstance> instanceProperty;
 	
 	private ModelManager() {
 		staticBaseModel = new HashMap<String, AbstractBaseModel>();
 		
 		instanceAgentModel = new HashMap<String, Agent>();
 		instanceStructureModel = new HashMap<String, Structure>();
+		instanceProperty = new HashMap<String, PropertyInstance>();
 		
 		initialize();
 		
 	}
 	
-	
 	private void initialize() {
-		BaseAgent a = new BaseAgent();
-		a.id = "Agent";
-		a.parent = null;
-		this.addAgentModel(a);
-		
-		BaseWork w = new BaseWork();
-		w.id = "Work";
-		w.parent = null;
-		this.addWorkModel(w);
-		
-		BaseStructure s = new BaseStructure();
-		s.id = "Structure";
-		s.parent = null;
-		this.addStructureModel(s);
-		
-		BaseItem i = new BaseItem();
-		i.id = "Item";
-		i.parent = null;
-		this.addItemModel(i);
+//		BaseAgent a = new BaseAgent();
+//		a.id = "Agent";
+//		a.parent = null;
+//		this.addAgentModel(a);
+//		
+//		BaseWork w = new BaseWork();
+//		w.id = "Work";
+//		w.parent = null;
+//		this.addWorkModel(w);
+//		
+//		BaseStructure s = new BaseStructure();
+//		s.id = "Structure";
+//		s.parent = null;
+//		this.addStructureModel(s);
+//		
+//		BaseItem i = new BaseItem();
+//		i.id = "Item";
+//		i.parent = null;
+//		this.addItemModel(i);
 		
 	}
-
 
 	public static synchronized ModelManager getInstance(){
 		if(instance==null){
@@ -66,10 +66,6 @@ public class ModelManager {
 		staticBaseModel.put(w.id, w);
 	}
 	
-	public void addRuleModel(BaseRule r) {
-		staticBaseModel.put(r.id, r);
-	}
-	
 	public void addAgentModel(BaseAgent a) {
 		staticBaseModel.put(a.id, a);
 	}
@@ -78,7 +74,6 @@ public class ModelManager {
 		staticBaseModel.put(i.id, i);
 	}
 	
-
 	public void addStructureInstance(String id, String type) {
 		Structure s = new Structure(id, type);
 		instanceStructureModel.put(id, s);
@@ -87,6 +82,10 @@ public class ModelManager {
 	public void addAgentInstance(String id, String type) {
 		Agent a = new Agent(id, type);
 		instanceAgentModel.put(id, a);
+	}
+	
+	public void addPropertyInstance(String id, String type) {
+		
 	}
 
 	public void setFacility(String child, String parent) {
@@ -140,10 +139,6 @@ public class ModelManager {
 		return (BaseWork)this.getBaseModel(workType);
 	}
 	
-	public BaseRule getBaseRule(String ruleType) {
-		return (BaseRule)this.getBaseModel(ruleType);
-	}
-
 	public AbstractBaseModel getBaseModel(String type) {
 		return staticBaseModel.get(type);
 	}

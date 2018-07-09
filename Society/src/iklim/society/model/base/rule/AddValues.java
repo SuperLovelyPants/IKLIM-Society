@@ -1,4 +1,4 @@
-package iklim.society.model.rule;
+package iklim.society.model.base.rule;
 
 public class AddValues {
 	private String value;

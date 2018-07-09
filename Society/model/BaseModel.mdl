@@ -1,71 +1,420 @@
 {
-  "District" : {
-    "name" : ,
-    "type" : "",
-    "builtIn": [
-
-    ],
-    "condition" : "",
-    "climateProperty" : "cp001",
-    "safety" :
-  },
-  "ClimateProperty" : {
-    "temperature" : ,
-    "hasTree" :,
-    "amountOfWater" : ,
-  },
-
-  "Structure" : {
-    "name" : ,
-    "builtIn" : [
-
-    ],
-    "hasPropertySet" : [
-      {
-        "PropertySetClass" : ,
-        "PropertySet" : "propertySet001"
+  "Instances" : [
+    {
+      "id" : "farmerAgent001",
+      "type" : "Agent",
+      "workerCaperbility" : [
+        "farmerCaperbility"
+      ],
+      "hasProperties" : [
+        "wielding001",
+        "inventory001",
+        "farmerProperty001"
+      ]
+    },
+    {
+      "id" : "ironHoe001",
+      "type" : "Hoe",
+      "hasProperties" : [
+        "equipmentProperty001"
+      ]
+    },
+    {
+      "id" : "Farm001",
+      "type" : "Farm",
+      "hasProperties" : [
+        "structureProperty001",
+        "builtIn001"
+      ]
+    },
+    {
+      "id" : "FarmLand001",
+      "type" : "FarmLand",
+      "targetCaperbility" : [
+        "farmerCaperbility"
+      ],
+      "hasProperties" : [
+        "inventory002",
+        "structureProperty002",
+        "cultivateProperty001",
+        "FarmLandState/Cultivating"
+      ]
+    },
+    {
+      "id" : "wielding001",
+      "type" : "wieldingProperty",
+      "properties" : {
+        "rightHand" : "ironHoe001"
       }
-      {
-        "propertySetClass" : "Inventory",
-        "propertySet" : "inventory001"
+    },
+    {
+      "id" : "inventory001",
+      "type" : "inventory",
+      "size" : "100",
+      "content" : [
+        "wheat001",
+      ]
+    },
+    {
+      "id" : "wheat001",
+      "type" : "Wheat",
+      "properties" : [
+        "itemProperty001",
+        "plantableProperty001"
+      ]
+    },
+    {
+      "id" : "itemProperty001",
+      "type" : "ItemProperty",
+      "properties" : {
+        "size" : 5
       }
-    ],
+    },
+    {
+      "id" : "plantableProperty001",
+      "type" : "PlantableProperty",
+      "properties" : {
 
-  },
-  "Inventory" : {
-
-  },
-  "Item" : {
-    "name" :,
-    "stored" :,
-    "hasPropertySet" : [
-      {
-        "propertySetClass" : "Edible",
-        "propertySet" : "edible001"
       }
-    ]
+    },
+    {
+      "id" : "farmerProperty001",
+      "type" : "farmerProperty",
+      "properties" : {
+        "str" : 5,
+        "dex" : 7
+      }
+    },
+    {
+      "id" : "equipmentProperty001",
+      "type" : "equipmentProperty",
+      "properties" : {
+        "attack" : 15,
+        "durability" : 200
+      }
+    },
+    {
+      "id" : "structureProperty001",
+      "type" : "structureProperty",
+      "properties" : {
+        "durability" : 3000
+      }
+    },
+    {
+      "id" : "builtIn001",
+      "type" : "builtIn",
+      "content" : [
+        "farmLand001"
+      ]
+    },
+    {
+      "id" : "inventory002",
+      "type" : "inventory",
+      "size" : 10,
+      "content" : [
+      ]
+    },
+    {
+      "id" : "cultivateProperty001",
+      "type" : "CultivateProperty",
+      "properties" : {
+        "growth" : 7,
+        "fertility" : 10
+      }
+    },
+    {
+      "id" : "structureProperty002",
+      "type" : "structureProperty",
+      "properties" : {
+        "durability" : 1000
+      }
+    }
+  ],
 
-  },
+  "BaseModels" : [
+    {
+      "id" : "GameThing",
+      "name" : "GameThing",
+    },
+    {
+      "id" : "MaterialThing",
+      "name" : "MaterialThing",
+      "parent" : "GameThing",
+      "propertyModel" : [
+        {
+          "id" : "id",
+          "type" : "String"
+        }
+        {
+          "id" : "type",
+          "type" : "String"
+        }
+        {
+          "name" : "hasProperty",
+          "type" : "propertySet"
+        }
+        {
+          "name" : "wokerCaperbility",
+          "type" : "ArrayList<String>"
+        }
+        {
+          "name" : "targetCaperbility",
+          "type" : "ArrayList<String>"
+        }
+      ]
+    },
+    {
+      "id" : "Agent",
+      "name" : "Agent",
+      "parent" : "MaterialThing"
+    },
+    {
+      "id" : "Structure",
+      "name" : "Structure",
+      "parent" : "MaterialThing"
+    },
+    {
+      "id" : "Inventory",
+      "name" : "Inventory",
+      "parent" : "MaterialThing",
+      "propertyModel" : [
+        {
+          "name" : "content",
+          "type" : "ArrayList<String>"
+        }
+      ]
+    },
+    {
+      "id" : "Item",
+      "name" : "Item",
+      "parent" : "MaterialThing"
+    },
+    {
+      "id" : "ConceptualThing",
+      "name" : "ConceptualThing",
+      "parent" : "GameThing"
+    },
+    {
+      "id" : "Work",
+      "name" : "Work",
+      "parent" : "ConceptualThing",
+      "propertyModel" : [
+        {
+          "id" : "precondition",
+          "type" : "String"
+        }
+        {
+          "name" : "argument",
+          "type" : "ArrayList<String>"
+        }
+        {
+          "name" : "ruleFactor",
+          "type" : "String"
+        }
+        {
+          "name" : "rule",
+          "type" : "String"
+        }
+        {
+          "name" : "Listener",
+          "type" : "ArrayList<String>"
+        }
+      ]
+    },
+    {
+      "id" : "PropertySet",
+      "name" : "PropertySet",
+      "parent" : "ConceptualThing",
+      "propertyModel" : [
+        {
+          "name" : "properties",
+          "type" : "ArrayList<String>"
+        }
+      ]
+    },
+    {
+      "id" : "State",
+      "name" : "State",
+      "parent" : "ConceptualThing",
+      "propertyModel" : [
+        {
+          "name" : "states",
+          "type" : "ArrayList<String>"
+        }
+        {
+          "name" : "stateRule",
+          "type" : "String"
+        }
+      ]
+    },
+    {
+      "id" : "CapabilityProperty",
+      "name" : "CapabilityProperty",
+      "parent" : "ConceptualThing",
+      "propertyModel" : [
+        {
+          "name" : "capable",
+          "type" : "ArrayList<String>"
+        }
+      ]
+    }
 
-  "edible001" : {
-    "satiety" : ,
-    "energy" : ,
-  },
-
-  "Agent" : {
-
-  },
-  "Equipment" : {
-
-  },
-  "Work" : {
-
-  },
-  "Rule" : {
-    "type" : "",
-  },
-  "Condition" : {
-
-  }
-
+  ],
+  "PropertySet" : [
+    {
+      "id" : "CultivateProperty",
+      "name" : "CultivateProperty",
+      "parent" : "PropertySet",
+      "properties" : [
+        "growth",
+        "fertility"
+      ]
+    },
+    {
+      "id" : "EquipmentProperty",
+      "name" : "EquipmentProperty",
+      "parent" : "PropertySet",
+      "properties" : [
+        "attack",
+        "protect",
+        "durability",
+        "statLimitProperty"
+      ]
+    },
+    {
+      "id" : "ItemProperty",
+      "name" : "ItemProperty",
+      "parent" : "PropertySet",
+      "properties" : [
+        "size"
+      ]
+    },
+    {
+      "id" : "PlantableProperty",
+      "name" : "PlantableProperty",
+      "parent" : "PropertySet",
+      "properties" : [
+      ]
+    }
+  ],
+  "CapabilityProperty" : [
+    {
+      "id" : "farmerCaperbility",
+      "name" : "farmerCaperbility",
+      "parent" : "CapabilityProperty",
+      "capable" : [
+        "PlantingWork",
+        "CultivatingWork",
+        "HarvestingWork"
+      ]
+    }
+  ],
+  "State" : [
+    {
+      "id" : "CultivatingState",
+      "name" : "CultivatingState",
+      "parent" : "State",
+      "states" : [
+        "Cultivating",
+        "Harvestable",
+        "RestLand"
+      ]
+    },
+    {
+      "id" : "Cultivating",
+      "name" : "Cultivating",
+      "parent" : "CultivatingState",
+    },
+    {
+      "id" : "Harvestable",
+      "name" : "Harvestable",
+      "parent" : "CultivatingState"
+    },
+    {
+      "id" : "RestLand",
+      "name" : "RestLand",
+      "parent" : "CultivateState"
+    },
+  ],
+  "Work" : [
+    {
+      "id" : "CultivatingWork",
+      "name" : "CultivatingWork",
+      "parent" : "Work",
+      "precondition" : "ex) target/state == Cultivating",
+      "workDetail" : [
+        {
+          "targetValue" : "target/CultivateProperty/growth",
+          "rule" : "basicRule",
+          "ruleFactor" : "ex) if worker/wieldingProperty hasHoe addictiveFactor++"
+        }
+      ]
+    },
+    {
+      "id" : "PlantingWork",
+      "name" : "PlantingWork",
+      "parent" : "Work",
+      "precondition" : "ex) target/state == RestLand",
+      "argument" : {
+        "seed" : "hasProperties/PlantableProperty",
+      },
+      "workDetail" : [
+        {
+          "targetValue" : "target/CultivatingState",
+          "rule" : "target/CultivatingState == Cultivating",
+        }
+        {
+          "targetValue" : "worker/Inventory",
+          "rule" : "delete seed"
+        }
+      ]
+    },
+    {
+      "id" : "HarvestCheck",
+      "name" : "HarvestCheck",
+      "parent" : "Work",
+      "listener" : "target/CultivateProperty/growth",
+      "precondition" : "target/CultivateProperty/growth == 10",
+      "workDetail" : [
+        {
+          "targetValue" : "target/CultivatingState",
+          "rule" : "target/CultivatingState == Harvestable"
+        }
+      ]
+    }
+  ],
+  "Item" : [
+    {
+      "id" : "PlantItem",
+      "name" : "PlantItem",
+      "parent" : "Item"
+    },
+    {
+      "id" : "Wheat",
+      "name" : "Wheat",
+      "parent" : "PlantItem"
+    },
+    {
+      "id" : "Equipment",
+      "name" : "Equipment",
+      "parent" : "Item",
+    },
+    {
+      "id" : "Hoe",
+      "name" : "Hoe",
+      "parent" : "Equipment"
+    }
+  ],
+  "Structure" : [
+    {
+      "id" : "Farm",
+      "name" : "Farm",
+      "parent" : "Structure"
+    },
+    {
+      "id" : "FarmLand",
+      "name" : "FarmLand",
+      "parent" : "Structure"
+    }
+  ]
 }

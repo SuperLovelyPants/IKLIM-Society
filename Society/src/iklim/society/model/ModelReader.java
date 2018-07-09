@@ -8,12 +8,12 @@ import iklim.society.model.base.Result;
 import iklim.society.model.base.property.AbstractProperty;
 import iklim.society.model.base.property.FloatProperty;
 import iklim.society.model.base.property.IntProperty;
+import iklim.society.model.base.rule.AddValues;
+import iklim.society.model.base.rule.Evaluator;
+import iklim.society.model.base.rule.Multiplier;
+import iklim.society.model.base.rule.Rule;
 import iklim.society.model.instance.Agent;
 import iklim.society.model.instance.Structure;
-import iklim.society.model.rule.AddValues;
-import iklim.society.model.rule.Evaluate;
-import iklim.society.model.rule.Multiplier;
-import iklim.society.model.rule.Rule;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -31,11 +31,6 @@ import com.google.gson.JsonSyntaxException;
 import static iklim.society.model.ModelScheme.*;
 
 public class ModelReader {
-	
-
-	
-
-
 
 	public static ModelManager parseModel(String path){
 		ModelManager manager = ModelManager.getInstance();
@@ -198,31 +193,4 @@ public class ModelReader {
 		return s;
 	}
 
-	private static ArrayList<AbstractProperty> getModelProperty(JsonObject entity) {
-		ArrayList<AbstractProperty> properties = new ArrayList<AbstractProperty>();
-		if(!entity.has(ObjectProperties))
-			return properties;
-		for(JsonElement e :entity.get(ObjectProperties).getAsJsonArray()){
-			JsonObject property = e.getAsJsonObject();
-			String name = property.get(PropertyName).getAsString();
-			if(property.get(PropertyType).getAsString().equals(ValueFloatValue)){
-				float initValue = property.get(PropertyInitValue).getAsFloat();
-				FloatProperty f = new FloatProperty(name, initValue);
-				f.setMinValue(property.get(PropertyMinValue).getAsFloat());
-				f.setMaxValue(property.get(PropertyMaxValue).getAsFloat());
-				properties.add(f);
-				continue;
-			}
-			if(property.get(PropertyType).getAsString().equals(ValueIntValue)){
-				int initValue = property.get(PropertyInitValue).getAsInt();
-				IntProperty f = new IntProperty(name, initValue);
-				f.setMinValue(property.get(PropertyMinValue).getAsInt());
-				f.setMaxValue(property.get(PropertyMaxValue).getAsInt());
-				properties.add(f);
-				continue;
-			}
-		}
-		return properties;
-	}
-	
 }

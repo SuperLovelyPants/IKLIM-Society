@@ -1,21 +1,31 @@
 package iklim.society.model.base;
 
-import iklim.society.model.rule.Rule;
+import java.util.Collection;
+import java.util.LinkedList;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import iklim.society.model.base.rule.Rule;
+import iklim.society.model.instance.argument.Argument;
 
-public class BaseWork extends AbstractBaseModel {
-	public String worker;
-	public String target;
-	private String rule;
+public class BaseWork extends AbstractExecutable {
 	
-	public String getRule() {
-		return rule;
-	}
-	public void setRule(String rule) {
-		this.rule = rule;
+	private LinkedList<Rule> ruleSet;
+	
+
+	public BaseWork() {
+		ruleSet = new LinkedList<>();
 	}
 	
-	
+	public LinkedList<Rule> getRuleSet() {
+		return ruleSet;
+	}
+	@Override
+	public Collection<String> execute(String worker, String target, Argument ...args){
+		LinkedList<String> tempwork = new LinkedList<String>();
+		for (Rule rule : ruleSet) {
+			Collection<String> effectWorks = rule.execute(worker, target, args);
+			tempwork.addAll(effectWorks);
+		}
+		return tempwork;
+	}
+
 }

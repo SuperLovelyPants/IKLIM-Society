@@ -1,14 +1,22 @@
 package iklim.society.model.base;
 
-import iklim.society.model.base.property.AbstractProperty;
-
-import java.util.ArrayList;
-
-public class BaseStructure extends AbstractBaseModel {
+public class BaseStructure extends AbstractCapable {
 	
-	public int area;
-	public String workID;
-	public int invenSize;
-	public int fieldSize;
-	public ArrayList<String> buildable;
+//	private int area;
+//	private int fieldSize;
+//	private LinkedList<String> buildable;
+//	
+//	public int getFieldSize() {
+//		return fieldSize;
+//	}
+//	public void setFieldSize(int fieldSize) {
+//		this.fieldSize = fieldSize;
+//	}
+//	public LinkedList<String> getBuildable() {
+//		return buildable;
+//	}
+//	public void setBuildable(LinkedList<String> buildable) {
+//		this.buildable = buildable;
+//	}
+	
 }

@@ -1,5 +1,7 @@
 package iklim.society.model.instance;
 
+import java.util.Collection;
+
 import iklim.society.model.ModelManager;
 import iklim.society.model.base.BaseWork;
 
@@ -25,6 +27,13 @@ public class Work extends AbstractModelInstance{
 
 	public String getTarget() {
 		return target;
+	}
+
+	public Collection<Work> execute() {
+		
+		
+		// TODO execute Algorithm in Work Class
+		return null;
 	}
 	
 	

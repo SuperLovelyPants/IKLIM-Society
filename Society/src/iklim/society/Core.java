@@ -6,6 +6,9 @@ import iklim.society.model.ModelScheme;
 import iklim.society.model.base.BaseRule;
 import iklim.society.model.base.BaseWork;
 import iklim.society.model.base.Result;
+import iklim.society.model.base.rule.AddValues;
+import iklim.society.model.base.rule.Multiplier;
+import iklim.society.model.base.rule.Rule;
 import iklim.society.model.instance.AbstractModelInstance;
 import iklim.society.model.instance.Agent;
 import iklim.society.model.instance.Structure;
@@ -13,12 +16,10 @@ import iklim.society.model.instance.Work;
 import iklim.society.model.instance.property.FloatPropertyInstance;
 import iklim.society.model.instance.property.IntPropertyInstance;
 import iklim.society.model.instance.property.PropertyInstance;
-import iklim.society.model.rule.AddValues;
-import iklim.society.model.rule.Multiplier;
-import iklim.society.model.rule.Rule;
 
 public class Core {
 	private ModelManager 		model;
+	private WorkExecutor		executor;
 	
 	public Core() {
 		model = ModelReader.parseModel("./model/BaseModel.mdl");

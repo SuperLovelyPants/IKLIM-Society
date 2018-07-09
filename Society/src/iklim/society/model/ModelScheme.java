@@ -53,7 +53,10 @@ public class ModelScheme {
 	public static final String PropertyRule					= "rule";
 	public static final String PropertyEvaluate				= "evaluate";
 	
+	public static final String PropertySet					= "propertySet";
+	
 	public static final String ValueFloatValue				= "floatValue";
 	public static final String ValueIntValue 				= "intValue";
-	
+	public static final String ValueStringValue				= "stringValue";
+	public static final String ValueFormulaValue			= "formulaValue";
 }

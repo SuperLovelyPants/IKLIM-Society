@@ -1,5 +1,5 @@
 package iklim.society.model.base;
 
-public class BaseItem extends AbstractBaseModel{
-	public int					size;
+public class BaseItem extends AbstractBaseModel {
+	
 }

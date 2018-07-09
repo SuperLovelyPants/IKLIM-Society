@@ -1,18 +1,19 @@
 package iklim.society.model.base;
 
 import iklim.society.model.ModelManager;
-import iklim.society.model.base.property.AbstractProperty;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class AbstractBaseModel {
-	public String id;
-	public String name;
-	public String description;
 	
-	public ArrayList<AbstractProperty> properties;
+	private String id;
+	private String name;
+	//private String description;
+	private String parent;
 	
-	public String parent;
+	private LinkedList<String> hasProperty;
+	private LinkedList<String> initialProperty;
 
 	public boolean isType(String type) {
 		if(type.equals(this.id)) {
@@ -24,5 +25,52 @@ public class AbstractBaseModel {
 		return false;
 	}
 	
-	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+//	public String getDescription() {
+//		return description;
+//	}
+//
+//	public void setDescription(String description) {
+//		this.description = description;
+//	}
+
+	public String getParent() {
+		return parent;
+	}
+
+	public void setParent(String parent) {
+		this.parent = parent;
+	}
+
+	public LinkedList<String> getHasProperty() {
+		return hasProperty;
+	}
+
+	public void setHasProperty(LinkedList<String> hasProperty) {
+		this.hasProperty = hasProperty;
+	}
+
+	public LinkedList<String> getInitialProperty() {
+		return initialProperty;
+	}
+
+	public void setInitialProperty(LinkedList<String> initialProperty) {
+		this.initialProperty = initialProperty;
+	}
+
 }
