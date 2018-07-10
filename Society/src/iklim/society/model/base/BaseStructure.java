@@ -1,10 +1,12 @@
 package iklim.society.model.base;
 
+import java.util.LinkedList;
+
 public class BaseStructure extends AbstractCapable {
 	
 //	private int area;
 //	private int fieldSize;
-//	private LinkedList<String> buildable;
+	private LinkedList<String> buildable;
 //	
 //	public int getFieldSize() {
 //		return fieldSize;
@@ -12,11 +14,11 @@ public class BaseStructure extends AbstractCapable {
 //	public void setFieldSize(int fieldSize) {
 //		this.fieldSize = fieldSize;
 //	}
-//	public LinkedList<String> getBuildable() {
-//		return buildable;
-//	}
-//	public void setBuildable(LinkedList<String> buildable) {
-//		this.buildable = buildable;
-//	}
+	public LinkedList<String> getBuildable() {
+		return buildable;
+	}
+	public void setBuildable(LinkedList<String> buildable) {
+		this.buildable = buildable;
+	}
 	
 }

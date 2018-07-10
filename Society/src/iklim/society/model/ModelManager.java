@@ -17,6 +17,7 @@ import iklim.society.model.base.rule.Rule;
 import iklim.society.model.instance.AbstractModelInstance;
 import iklim.society.model.instance.Agent;
 import iklim.society.model.instance.Structure;
+import iklim.society.model.instance.argument.IndividualArgument;
 import iklim.society.model.instance.property.PropertyInstance;
 
 public class ModelManager {
@@ -29,7 +30,10 @@ public class ModelManager {
 	private HashMap<String, PropertyInstance> instanceProperty;
 	
 	private HashMap<String, Rule> ruleModel;
-	private HashMap<String, LinkedList<String>> ruleEffectWorkManager;
+	private HashMap<String, BaseWork> workModel;
+	
+	private HashMap<String, LinkedList<String>> ruleEffectWorkBuffer;
+	private HashMap<String, LinkedList<IndividualArgument>> workArgumentBuffer;
 	
 	private ModelManager() {
 		staticBaseModel = new HashMap<String, AbstractBaseModel>();
@@ -44,12 +48,20 @@ public class ModelManager {
 	
 	
 	
-	public HashMap<String, LinkedList<String>> getRuleEffectWorkManager() {
-		return ruleEffectWorkManager;
+	public HashMap<String, LinkedList<IndividualArgument>> getWorkArgumentBuffer() {
+		return workArgumentBuffer;
 	}
 
-	public void setRuleEffectWorkManager(HashMap<String, LinkedList<String>> ruleEffectWorkManager) {
-		this.ruleEffectWorkManager = ruleEffectWorkManager;
+	public void setWorkArgumentBuffer(HashMap<String, LinkedList<IndividualArgument>> workArgumentBuffer) {
+		this.workArgumentBuffer = workArgumentBuffer;
+	}
+
+	public HashMap<String, LinkedList<String>> getRuleEffectWorkBuffer() {
+		return ruleEffectWorkBuffer;
+	}
+
+	public void setRuleEffectWorkManager(HashMap<String, LinkedList<String>> ruleEffectWorkBuffer) {
+		this.ruleEffectWorkBuffer = ruleEffectWorkBuffer;
 	}
 
 	public HashMap<String, Rule> getRuleModel() {
@@ -64,6 +76,10 @@ public class ModelManager {
 		return ruleModel.values();
 	}
 
+	public Collection<BaseWork> getWorks() {
+		// TODO Auto-generated method stub
+		return workModel.values();
+	}
 
 
 	private void initialize() {
@@ -197,4 +213,10 @@ public class ModelManager {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public Rule getRule(String ruleName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -3,7 +3,10 @@ package iklim.society.model;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.HashMap;
 import java.util.LinkedList;
+
+import javax.management.modelmbean.ModelMBeanInfoSupport;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -13,9 +16,15 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
 import iklim.society.model.base.BaseCapabilityProperty;
+import iklim.society.model.base.BaseItem;
 import iklim.society.model.base.BasePropertySet;
 import iklim.society.model.base.BaseState;
+import iklim.society.model.base.BaseStructure;
+import iklim.society.model.base.BaseWork;
 import iklim.society.model.base.rule.Rule;
+import iklim.society.model.base.utility.Precondition;
+import iklim.society.model.instance.argument.Argument;
+import iklim.society.model.instance.argument.IndividualArgument;
 
 public class ModelReader {
 
@@ -26,26 +35,19 @@ public class ModelReader {
 		try {
 			JsonElement e = parser.parse(new FileReader(f));
 			JsonObject root = e.getAsJsonObject();
-//			buildAgentModel(root.get(ObjectAgent).getAsJsonArray(), manager);
-//			buildStructureModel(root.get(ObjectStructure).getAsJsonArray(), manager);
-//			buildWorkModel(root.get(ObjectWork).getAsJsonArray(), manager);
-//			buildRuleModel(root.get(ObjectRule).getAsJsonArray(), manager);
-//			buildItemModel(root.get(ObjectItem).getAsJsonArray(), manager);
-			
-//			buildInstanceModel(root.get(ObjectStartCondition).getAsJsonObject(), manager);
 			
 			buildBaseModel(root.get(ModelScheme.ObjectBaseModel).getAsJsonArray(), manager);
 			
 			buildPropertySet(root.get(ModelScheme.ObjectPropertySet).getAsJsonArray(), manager);
 			buildState(root.get(ModelScheme.ObjectState).getAsJsonArray(), manager);
 			buildCapabilityProperty(root.get(ModelScheme.ObjectCapabilityProperty).getAsJsonArray(), manager);
-			
 			buildRule(root.get(ModelScheme.ObjectRule).getAsJsonArray(), manager);
-			effectWorkCheck(manager);
-	
 			buildWork(root.get(ModelScheme.ObjectWork).getAsJsonArray(), manager);
 			buildItem(root.get(ModelScheme.ObjectItem).getAsJsonArray(), manager);
 			buildStructure(root.get(ModelScheme.ObjectStructure).getAsJsonArray(), manager);
+			
+			effectWorkCheck(manager);
+			argumentCheck(manager);
 			
 			buildInstance(root.get(ModelScheme.ObjectInstance).getAsJsonArray(), manager);
 			
@@ -141,49 +143,132 @@ public class ModelReader {
 	
 	private static Rule buildRuleModel(JsonObject ruleObject, ModelManager manager) {
 		Rule rule = new Rule();
-		rule.setId(id);
-		rule.setName(name);
-		rule.setParent(parent);
-		rule.setEvaluator(evaluator);
-		rule.setTargetValue(targetValue);
+		rule.setId(ruleObject.get(ModelScheme.PropertyID).getAsString());
+		rule.setName(ruleObject.get(ModelScheme.PropertyName).getAsString());
+		rule.setParent(ruleObject.get(ModelScheme.PropertyParentType).getAsString());
+		//rule.setEvaluator(ruleObject.get(ModelScheme.PropertyEvaluate).getAsString());
+		rule.setTargetValue(ruleObject.get(ModelScheme.PropertyTargetValue).getAsString());
 		
-		JsonArray triggers = ruleObject.get(ModelScheme.PropertyTrigger).getAsJsonArray();
-		for (JsonElement triggerElement : triggers) {
-			String trigger = triggerElement.getAsString();
-			LinkedList<String> triggerList = manager.getRuleEffectWorkManager().get(trigger);
-			if(triggerList == null) {
-				manager.getRuleEffectWorkManager().put(trigger, id);
-			} else {
-				triggerList.add(id);
-			}
+		JsonArray arguments = ruleObject.get(ModelScheme.PropertyArgument).getAsJsonArray();
+		LinkedList<IndividualArgument> argumentList = new LinkedList<IndividualArgument>();
+		for (JsonElement argumentElement : arguments) {
+			JsonObject arguementObject = argumentElement.getAsJsonObject();
+			IndividualArgument argument = new IndividualArgument();
+			argument.setName(arguementObject.get(ModelScheme.PropertyName).getAsString());
+			argument.setType(arguementObject.get(ModelScheme.PropertyType).getAsString());
+			argumentList.add(argument);
 		}
 		
+		manager.getWorkArgumentBuffer().put(rule.getId(), argumentList);
 		
 		return rule;
 	}
 	
-	private static void effectWorkCheck(ModelManager manager) {
-		
-		for (Rule rule : manager.getRules()) {
-			rule.setEffectWorks(manager.getRuleEffectWorkManager().get(rule.getTargetValue()));
+	private static void buildWork(JsonArray joWork, ModelManager manager) {
+		for (JsonElement workElement : joWork) {
+			JsonObject workObject = workElement.getAsJsonObject();
+			manager.addWorkModel(buildBaseWorkModel(workObject, manager));
 		}
-		
 	}
 	
-	private static void buildWork(JsonArray joWork, ModelManager manager) {
+	private static BaseWork buildBaseWorkModel(JsonObject workObject, ModelManager manager) {
+		BaseWork bw = new BaseWork();
+		bw.setId(workObject.get(ModelScheme.PropertyID).getAsString());
+		bw.setName(workObject.get(ModelScheme.PropertyName).getAsString());
+		bw.setParent(workObject.get(ModelScheme.PropertyParentType).getAsString());
+		
+		LinkedList<Precondition> preconditionList = new LinkedList<Precondition>();
+		JsonArray preconditions = workObject.get(ModelScheme.PropertyPrecondition).getAsJsonArray();		
+		for (JsonElement preconditionElement : preconditions) {
+			Precondition precondition = new Precondition();
+			precondition.setCondition(preconditionElement.getAsString());
+			preconditionList.add(precondition);
+		}
+		bw.setPrecondition(preconditionList);
+		
+		LinkedList<String> ruleList = new LinkedList<String>();
+		JsonArray rules = workObject.get(ModelScheme.PropertyRuleSet).getAsJsonArray();
+		for (JsonElement ruleElement : rules) {
+			ruleList.add(ruleElement.getAsString());
+		}
+		bw.setRuleSet(ruleList);
+		
+		JsonArray triggers = workObject.get(ModelScheme.PropertyTrigger).getAsJsonArray();
+		for (JsonElement triggerElement : triggers) {
+			String trigger = triggerElement.getAsString();
+			LinkedList<String> triggerList = manager.getRuleEffectWorkBuffer().get(trigger);
+			if(triggerList == null) {
+				triggerList = new LinkedList<String>();
+				triggerList.add(bw.getId());
+				manager.getRuleEffectWorkBuffer().put(trigger,triggerList);
+			} else {
+				triggerList.add(bw.getId());
+			}
+		}
+		
+		return bw;
 		
 	}
 	
 	private static void buildItem(JsonArray joItem, ModelManager manager) {
+		for (JsonElement itemElement : joItem) {
+			JsonObject itemObject = itemElement.getAsJsonObject();
+			manager.addItemModel(buildItemModel(itemObject));
+		}
+	}
+	
+	private static BaseItem buildItemModel(JsonObject itemObject) {
+		BaseItem bi = new BaseItem();
+		bi.setId(itemObject.get(ModelScheme.PropertyID).getAsString());
+		bi.setName(itemObject.get(ModelScheme.PropertyName).getAsString());
+		bi.setParent(itemObject.get(ModelScheme.PropertyParentType).getAsString());
 		
+		return bi;
 	}
 	
 	private static void buildStructure(JsonArray joStructure, ModelManager manager) {
+		for (JsonElement structureElement : joStructure) {
+			JsonObject structureObject = structureElement.getAsJsonObject();
+			manager.addStructureModel(buildStructureModel(structureObject));
+		}	
+	}
+	
+	private static BaseStructure buildStructureModel(JsonObject StructureObject) {
+		BaseStructure bs = new BaseStructure();
+		bs.setId(StructureObject.get(ModelScheme.PropertyID).getAsString());
+		bs.setName(StructureObject.get(ModelScheme.PropertyName).getAsString());
+		bs.setParent(StructureObject.get(ModelScheme.PropertyParentType).getAsString());
 		
+		LinkedList<String> buildableList = new LinkedList<>();
+		JsonArray buildables = StructureObject.get(ModelScheme.PropertyBuildable).getAsJsonArray();
+		for (JsonElement buildableElement : buildables) {
+			buildableList.add(buildableElement.getAsString());
+		}
+		
+		bs.setBuildable(buildableList);
+		
+		return bs;
 	}
 	
 	private static void buildInstance(JsonArray joInstance, ModelManager manager) {
 		
+	}
+	
+	private static void effectWorkCheck(ModelManager manager) {
+		for (Rule rule : manager.getRules()) {
+			rule.setEffectWorks(manager.getRuleEffectWorkBuffer().get(rule.getTargetValue()));
+		}
+	}
+	
+	private static void argumentCheck(ModelManager manager) {
+		for(BaseWork work : manager.getWorks()) {
+			HashMap<String, Argument> argumentList = new HashMap<String, Argument>();
+			LinkedList<String> ruleList = work.getRuleSet();
+			for (String ruleName : ruleList) {
+				LinkedList<Arguement> ruleArgumentList = manager.getWorkArgumentBuffer().get(ruleName);
+			}
+			
+		}
 	}
 	
 
