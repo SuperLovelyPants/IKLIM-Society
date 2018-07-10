@@ -265,7 +265,7 @@ public class ModelReader {
 			HashMap<String, Argument> argumentList = new HashMap<String, Argument>();
 			LinkedList<String> ruleList = work.getRuleSet();
 			for (String ruleName : ruleList) {
-				LinkedList<Arguement> ruleArgumentList = manager.getWorkArgumentBuffer().get(ruleName);
+				LinkedList<Argument> ruleArgumentList = manager.getWorkArgumentBuffer().get(ruleName);
 			}
 			
 		}
