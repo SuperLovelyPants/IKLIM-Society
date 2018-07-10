@@ -12,16 +12,6 @@ import iklim.society.model.instance.argument.IndividualArgument;
 public class BaseWork extends AbstractExecutable {
 	
 	private LinkedList<String> ruleSet;
-	
-	private HashMap<String, IndividualArgument> arguments;
-
-	public HashMap<String, IndividualArgument> getArguments() {
-		return arguments;
-	}
-
-	public void setArguments(HashMap<String, IndividualArgument> arguments) {
-		this.arguments = arguments;
-	}
 
 	public void setRuleSet(LinkedList<String> ruleSet) {
 		this.ruleSet = ruleSet;

@@ -32,9 +32,6 @@ public class ModelManager {
 	private HashMap<String, Rule> ruleModel;
 	private HashMap<String, BaseWork> workModel;
 	
-	private HashMap<String, LinkedList<String>> ruleEffectWorkBuffer;
-	private HashMap<String, LinkedList<IndividualArgument>> workArgumentBuffer;
-	
 	private ModelManager() {
 		staticBaseModel = new HashMap<String, AbstractBaseModel>();
 		
@@ -44,24 +41,6 @@ public class ModelManager {
 		
 		initialize();
 		
-	}
-	
-	
-	
-	public HashMap<String, LinkedList<IndividualArgument>> getWorkArgumentBuffer() {
-		return workArgumentBuffer;
-	}
-
-	public void setWorkArgumentBuffer(HashMap<String, LinkedList<IndividualArgument>> workArgumentBuffer) {
-		this.workArgumentBuffer = workArgumentBuffer;
-	}
-
-	public HashMap<String, LinkedList<String>> getRuleEffectWorkBuffer() {
-		return ruleEffectWorkBuffer;
-	}
-
-	public void setRuleEffectWorkManager(HashMap<String, LinkedList<String>> ruleEffectWorkBuffer) {
-		this.ruleEffectWorkBuffer = ruleEffectWorkBuffer;
 	}
 
 	public HashMap<String, Rule> getRuleModel() {
