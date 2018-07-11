@@ -22,30 +22,125 @@ import iklim.society.model.instance.Structure;
 import iklim.society.model.instance.property.PropertyInstance;
 
 public class ModelManager {
-	private static ModelManager 			instance;
+	private static ModelManager 					instance;
 	
-	private HashMap<String, AbstractBaseModel> staticBaseModel;
+	private HashMap<String, Agent>					instanceAgent;
+	private HashMap<String, Structure>				instanceStructure;
+	private HashMap<String, PropertySet> 			instancePropertySet;
+	private HashMap<String, Item>					instanceItem;
+	private HashMap<String, Inventory>				instanceInventory;
 	
-	private HashMap<String, Agent>				instanceAgent;
-	private HashMap<String, Structure>			instanceStructure;
-	private HashMap<String, PropertySet> 		instancePropertySet;
-	private HashMap<String, Item>				instanceItem;
-	private HashMap<String, Inventory>			instanceInventory;
-	
-	private HashMap<String, Rule> ruleModel;
-	private HashMap<String, BaseWork> workModel;
+	private HashMap<String, BasePropertySet>		modelPropertySet;
+	private HashMap<String, BaseCapabilityProperty>	modelCapabilityProperty;
+	private HashMap<String, BaseState>				modelState;
+	private HashMap<String, BaseWork>				modelWork;
+	private HashMap<String, Rule>					modelRule;
+	private HashMap<String, BaseItem>				modelItem;
+	private HashMap<String, BaseStructure>			modelStructure;
+	private HashMap<String, BaseAgent>				modelAgent;
 	
 	private ModelManager() {
-		staticBaseModel = new HashMap<String, AbstractBaseModel>();
 		
 		instanceAgent = new HashMap<String, Agent>();
 		instanceStructure = new HashMap<String, Structure>();
 		instancePropertySet = new HashMap<String, PropertySet>();
+		instanceItem = new HashMap<String, Item>();
+		instanceInventory = new HashMap<String, Inventory>();
+		
+		modelPropertySet = new HashMap<String, BasePropertySet>();
+		modelCapabilityProperty = new HashMap<String, BaseCapabilityProperty>();
+		modelState = new HashMap<String, BaseState>();
+		modelWork = new HashMap<String, BaseWork>();
+		modelRule = new HashMap<String, Rule>();
+		modelItem = new HashMap<String, BaseItem>();
+		modelStructure = new HashMap<String, BaseStructure>();
+		modelAgent = new HashMap<String, BaseAgent>();
 		
 		initialize();
 		
 	}
 
+	public static synchronized ModelManager getInstance(){
+		if(instance==null){
+			instance = new ModelManager();
+		}
+		return instance;
+	}
+	
+	private void initialize() {
+		BaseAgent a = new BaseAgent();
+		a.setId("Agent");
+		a.setParent(null);
+		this.addAgentModel(a);
+		
+		BaseWork w = new BaseWork();
+		w.setId("Work");
+		w.setParent(null);
+		this.addWorkModel(w);
+		
+		BaseStructure s = new BaseStructure();
+		s.setId("Structure");
+		s.setParent(null);
+		this.addStructureModel(s);
+		
+		BaseItem i = new BaseItem();
+		i.setId("Item");
+		i.setParent(null);
+		this.addItemModel(i);	
+	}
+
+	
+	public void addStructureModel(BaseStructure s) {
+		modelStructure.put(s.getId(), s);
+	}
+
+	public void addWorkModel(BaseWork w) {
+		modelWork.put(w.getId(), w);
+	}
+	
+	public void addAgentModel(BaseAgent a) {
+		modelAgent.put(a.getId(), a);
+	}
+	
+	public void addItemModel(BaseItem i){
+		modelItem.put(i.getId(), i);
+	}
+	
+	public void addPropertySetModel(BasePropertySet ps) {
+		modelPropertySet.put(ps.getId(), ps);
+	}
+
+	public void addStateModel(BaseState s) {
+		modelState.put(s.getId(), s);
+	}
+
+	public void addCapabilityPropertyModel(BaseCapabilityProperty cp) {
+		modelCapabilityProperty.put(cp.getId(), cp);
+	}
+
+	public void addRuleModel(Rule r) {
+		modelRule.put(r.getId(), r);
+	}
+
+	public Rule getRule(String ruleId) {
+		return modelRule.get(ruleId);
+	}
+	
+	public BaseWork getWork(String workId) {
+		return modelWork.get(workId);
+	}
+	
+	
+	public Collection<BaseWork> getWorks() {
+		return modelWork.values();
+	}
+	
+	public Collection<Rule> getRules() {
+		return modelRule.values();
+	}
+	
+	
+	//getters & setters------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	public HashMap<String, Agent> getInstanceAgent() {
 		return instanceAgent;
 	}
@@ -86,159 +181,68 @@ public class ModelManager {
 		this.instanceInventory = instanceInventory;
 	}
 
-	public HashMap<String, Rule> getRuleModel() {
-		return ruleModel;
+	public HashMap<String, BasePropertySet> getModelPropertySet() {
+		return modelPropertySet;
 	}
 
-	public void setRuleModel(HashMap<String, Rule> ruleModel) {
-		this.ruleModel = ruleModel;
+	public void setModelPropertySet(HashMap<String, BasePropertySet> modelPropertySet) {
+		this.modelPropertySet = modelPropertySet;
+	}
+
+	public HashMap<String, BaseCapabilityProperty> getModelCapabilityProperty() {
+		return modelCapabilityProperty;
+	}
+
+	public void setModelCapabilityProperty(HashMap<String, BaseCapabilityProperty> modelCapabilityProperty) {
+		this.modelCapabilityProperty = modelCapabilityProperty;
+	}
+
+	public HashMap<String, BaseState> getModelState() {
+		return modelState;
+	}
+
+	public void setModelState(HashMap<String, BaseState> modelState) {
+		this.modelState = modelState;
+	}
+
+	public HashMap<String, BaseWork> getModelWork() {
+		return modelWork;
+	}
+
+	public void setModelWork(HashMap<String, BaseWork> modelWork) {
+		this.modelWork = modelWork;
+	}
+
+	public HashMap<String, Rule> getModelRule() {
+		return modelRule;
+	}
+
+	public void setModelRule(HashMap<String, Rule> modelRule) {
+		this.modelRule = modelRule;
+	}
+
+	public HashMap<String, BaseItem> getModelItem() {
+		return modelItem;
+	}
+
+	public void setModelItem(HashMap<String, BaseItem> modelItem) {
+		this.modelItem = modelItem;
+	}
+
+	public HashMap<String, BaseStructure> getModelStructure() {
+		return modelStructure;
+	}
+
+	public void setModelStructure(HashMap<String, BaseStructure> modelStructure) {
+		this.modelStructure = modelStructure;
+	}
+
+	public HashMap<String, BaseAgent> getModelAgent() {
+		return modelAgent;
+	}
+
+	public void setModelAgent(HashMap<String, BaseAgent> modelAgent) {
+		this.modelAgent = modelAgent;
 	}
 	
-	public Collection<Rule> getRules() {
-		return ruleModel.values();
-	}
-
-	public Collection<BaseWork> getWorks() {
-		// TODO Auto-generated method stub
-		return workModel.values();
-	}
-
-
-	private void initialize() {
-//		BaseAgent a = new BaseAgent();
-//		a.id = "Agent";
-//		a.parent = null;
-//		this.addAgentModel(a);
-//		
-//		BaseWork w = new BaseWork();
-//		w.id = "Work";
-//		w.parent = null;
-//		this.addWorkModel(w);
-//		
-//		BaseStructure s = new BaseStructure();
-//		s.id = "Structure";
-//		s.parent = null;
-//		this.addStructureModel(s);
-//		
-//		BaseItem i = new BaseItem();
-//		i.id = "Item";
-//		i.parent = null;
-//		this.addItemModel(i);
-		
-	}
-
-	public static synchronized ModelManager getInstance(){
-		if(instance==null){
-			instance = new ModelManager();
-		}
-		return instance;
-	}
-
-	public void addStructureModel(BaseStructure s) {
-		staticBaseModel.put(s.getId(), s);
-	}
-
-	public void addWorkModel(BaseWork w) {
-		staticBaseModel.put(w.getId(), w);
-	}
-	
-	public void addAgentModel(BaseAgent a) {
-		staticBaseModel.put(a.getId(), a);
-	}
-	
-	public void addItemModel(BaseItem i){
-		staticBaseModel.put(i.getId(), i);
-	}
-	
-//	public void addStructureInstance(String id, String type) {
-//		Structure s = new Structure(id, type);
-//		instanceStructureModel.put(id, s);
-//	}
-//	
-//	public void addAgentInstance(String id, String type) {
-//		Agent a = new Agent(id, type);
-//		instanceAgentModel.put(id, a);
-//	}
-//	
-//	public void addPropertyInstance(String id, String type) {
-//		
-//	}
-//
-//	public void printInstance() {
-//		StringBuilder sb = new StringBuilder();
-//		sb.append("--Agent--\n");
-//		
-//		for (Entry<String, Agent> entry : instanceAgentModel.entrySet()) {
-//			sb.append(entry.getValue()).append("\n");
-//		}
-//		sb.append("\n--Structure--\n");
-//		for (Entry<String, Structure> entry : instanceStructureModel.entrySet()) {
-//			sb.append(entry.getValue()).append("\n");
-//		}
-//		System.out.println(sb.toString());
-//	}
-//
-//	public AbstractModelInstance get(String key) {
-//		if(instanceAgentModel.containsKey(key)){
-//			return this.getAgent(key);
-//		}
-//		if(instanceStructureModel.containsKey(key)){
-//			return this.getStructure(key);
-//		}
-//		return null;
-//	}
-//
-//	public Structure getStructure(String key) {
-//		return instanceStructureModel.get(key);
-//	}
-//
-//	public Agent getAgent(String key) {
-//		return instanceAgentModel.get(key);
-//	}
-
-	public BaseAgent getBaseAgent(String agentType) {
-		return (BaseAgent)this.getBaseModel(agentType);
-	}
-
-	public BaseStructure getBaseStructure(String structureType) {
-		return (BaseStructure)this.getBaseModel(structureType);
-	}
-
-	public BaseWork getBaseWork(String workType) {
-		return (BaseWork)this.getBaseModel(workType);
-	}
-	
-	public AbstractBaseModel getBaseModel(String type) {
-		return staticBaseModel.get(type);
-	}
-
-	public AbstractBaseModel getItemModel(String itemType) {
-		return (BaseItem)this.getBaseModel(itemType);
-	}
-
-	public void addPropertySetModel(BasePropertySet buildPropertySetModel) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void addStateModel(BaseState buildStateModel) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void addCapabilityPropertyModel(BaseCapabilityProperty buildCapabilityPropertyModel) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void addRuleModel(Rule buildRuleModel) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public Rule getRule(String ruleName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }
