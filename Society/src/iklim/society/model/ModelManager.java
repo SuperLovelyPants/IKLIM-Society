@@ -2,7 +2,6 @@ package iklim.society.model;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map.Entry;
 
 import iklim.society.model.base.AbstractBaseModel;
@@ -16,8 +15,10 @@ import iklim.society.model.base.BaseWork;
 import iklim.society.model.base.rule.Rule;
 import iklim.society.model.instance.AbstractModelInstance;
 import iklim.society.model.instance.Agent;
+import iklim.society.model.instance.Inventory;
+import iklim.society.model.instance.Item;
+import iklim.society.model.instance.PropertySet;
 import iklim.society.model.instance.Structure;
-import iklim.society.model.instance.argument.IndividualArgument;
 import iklim.society.model.instance.property.PropertyInstance;
 
 public class ModelManager {
@@ -25,9 +26,11 @@ public class ModelManager {
 	
 	private HashMap<String, AbstractBaseModel> staticBaseModel;
 	
-	private HashMap<String, Agent>			instanceAgentModel;
-	private HashMap<String, Structure>		instanceStructureModel;
-	private HashMap<String, PropertyInstance> instanceProperty;
+	private HashMap<String, Agent>				instanceAgent;
+	private HashMap<String, Structure>			instanceStructure;
+	private HashMap<String, PropertySet> 		instancePropertySet;
+	private HashMap<String, Item>				instanceItem;
+	private HashMap<String, Inventory>			instanceInventory;
 	
 	private HashMap<String, Rule> ruleModel;
 	private HashMap<String, BaseWork> workModel;
@@ -35,12 +38,52 @@ public class ModelManager {
 	private ModelManager() {
 		staticBaseModel = new HashMap<String, AbstractBaseModel>();
 		
-		instanceAgentModel = new HashMap<String, Agent>();
-		instanceStructureModel = new HashMap<String, Structure>();
-		instanceProperty = new HashMap<String, PropertyInstance>();
+		instanceAgent = new HashMap<String, Agent>();
+		instanceStructure = new HashMap<String, Structure>();
+		instancePropertySet = new HashMap<String, PropertySet>();
 		
 		initialize();
 		
+	}
+
+	public HashMap<String, Agent> getInstanceAgent() {
+		return instanceAgent;
+	}
+
+	public void setInstanceAgent(HashMap<String, Agent> instanceAgent) {
+		this.instanceAgent = instanceAgent;
+	}
+
+	public HashMap<String, Structure> getInstanceStructure() {
+		return instanceStructure;
+	}
+
+	public void setInstanceStructure(HashMap<String, Structure> instanceStructure) {
+		this.instanceStructure = instanceStructure;
+	}
+
+	public HashMap<String, PropertySet> getInstancePropertySet() {
+		return instancePropertySet;
+	}
+
+	public void setInstancePropertySet(HashMap<String, PropertySet> instancePropertySet) {
+		this.instancePropertySet = instancePropertySet;
+	}
+
+	public HashMap<String, Item> getInstanceItem() {
+		return instanceItem;
+	}
+
+	public void setInstanceItem(HashMap<String, Item> instanceItem) {
+		this.instanceItem = instanceItem;
+	}
+
+	public HashMap<String, Inventory> getInstanceInventory() {
+		return instanceInventory;
+	}
+
+	public void setInstanceInventory(HashMap<String, Inventory> instanceInventory) {
+		this.instanceInventory = instanceInventory;
 	}
 
 	public HashMap<String, Rule> getRuleModel() {
@@ -107,51 +150,51 @@ public class ModelManager {
 		staticBaseModel.put(i.getId(), i);
 	}
 	
-	public void addStructureInstance(String id, String type) {
-		Structure s = new Structure(id, type);
-		instanceStructureModel.put(id, s);
-	}
-	
-	public void addAgentInstance(String id, String type) {
-		Agent a = new Agent(id, type);
-		instanceAgentModel.put(id, a);
-	}
-	
-	public void addPropertyInstance(String id, String type) {
-		
-	}
-
-	public void printInstance() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("--Agent--\n");
-		
-		for (Entry<String, Agent> entry : instanceAgentModel.entrySet()) {
-			sb.append(entry.getValue()).append("\n");
-		}
-		sb.append("\n--Structure--\n");
-		for (Entry<String, Structure> entry : instanceStructureModel.entrySet()) {
-			sb.append(entry.getValue()).append("\n");
-		}
-		System.out.println(sb.toString());
-	}
-
-	public AbstractModelInstance get(String key) {
-		if(instanceAgentModel.containsKey(key)){
-			return this.getAgent(key);
-		}
-		if(instanceStructureModel.containsKey(key)){
-			return this.getStructure(key);
-		}
-		return null;
-	}
-
-	public Structure getStructure(String key) {
-		return instanceStructureModel.get(key);
-	}
-
-	public Agent getAgent(String key) {
-		return instanceAgentModel.get(key);
-	}
+//	public void addStructureInstance(String id, String type) {
+//		Structure s = new Structure(id, type);
+//		instanceStructureModel.put(id, s);
+//	}
+//	
+//	public void addAgentInstance(String id, String type) {
+//		Agent a = new Agent(id, type);
+//		instanceAgentModel.put(id, a);
+//	}
+//	
+//	public void addPropertyInstance(String id, String type) {
+//		
+//	}
+//
+//	public void printInstance() {
+//		StringBuilder sb = new StringBuilder();
+//		sb.append("--Agent--\n");
+//		
+//		for (Entry<String, Agent> entry : instanceAgentModel.entrySet()) {
+//			sb.append(entry.getValue()).append("\n");
+//		}
+//		sb.append("\n--Structure--\n");
+//		for (Entry<String, Structure> entry : instanceStructureModel.entrySet()) {
+//			sb.append(entry.getValue()).append("\n");
+//		}
+//		System.out.println(sb.toString());
+//	}
+//
+//	public AbstractModelInstance get(String key) {
+//		if(instanceAgentModel.containsKey(key)){
+//			return this.getAgent(key);
+//		}
+//		if(instanceStructureModel.containsKey(key)){
+//			return this.getStructure(key);
+//		}
+//		return null;
+//	}
+//
+//	public Structure getStructure(String key) {
+//		return instanceStructureModel.get(key);
+//	}
+//
+//	public Agent getAgent(String key) {
+//		return instanceAgentModel.get(key);
+//	}
 
 	public BaseAgent getBaseAgent(String agentType) {
 		return (BaseAgent)this.getBaseModel(agentType);

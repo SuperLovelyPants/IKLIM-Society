@@ -10,8 +10,8 @@ public class PropertySet extends AbstractModelInstance{
 
 	private HashMap<String, PropertyInstance> properties; 
 	
-	public PropertySet(String id) {
-		super(id, ModelScheme.PropertySet);
+	public PropertySet(String id, String type) {
+		super(id, type);
 		this.properties = new HashMap<String, PropertyInstance>();
 	}
 

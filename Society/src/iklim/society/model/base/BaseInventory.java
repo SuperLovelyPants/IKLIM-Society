@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class BaseInventory extends AbstractBaseModel {
 
 	private int invenSize;
-	private HashMap<String, BaseItem> items;
+	private HashMap<String, BaseItem> contents;
 	
 	public int getInvenSize() {
 		return invenSize;
@@ -13,11 +13,11 @@ public class BaseInventory extends AbstractBaseModel {
 	public void setInvenSize(int invenSize) {
 		this.invenSize = invenSize;
 	}
-	public HashMap<String, BaseItem> getItems() {
-		return items;
+	public HashMap<String, BaseItem> getContents() {
+		return contents;
 	}
-	public void setItems(HashMap<String, BaseItem> items) {
-		this.items = items;
+	public void setContents(HashMap<String, BaseItem> contents) {
+		this.contents = contents;
 	}
 	
 	
