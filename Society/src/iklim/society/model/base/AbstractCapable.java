@@ -6,6 +6,11 @@ public class AbstractCapable extends AbstractBaseModel{
 	private LinkedList<String> workerCapable;
 	private LinkedList<String> targetCapable;
 	
+	public AbstractCapable() {
+		this.workerCapable = new LinkedList<String>();
+		this.targetCapable = new LinkedList<String>();
+	}
+	
 	public LinkedList<String> getWorkerCapable() {
 		return workerCapable;
 	}

@@ -14,6 +14,8 @@ public class AbstractBaseModel {
 	
 	private LinkedList<String> hasProperty;
 	private LinkedList<String> initialProperty;
+	
+	private LinkedList<String> state;
 
 	public boolean isType(String type) {
 		if(type.equals(this.id)) {
@@ -71,6 +73,14 @@ public class AbstractBaseModel {
 
 	public void setInitialProperty(LinkedList<String> initialProperty) {
 		this.initialProperty = initialProperty;
+	}
+
+	public LinkedList<String> getState() {
+		return state;
+	}
+
+	public void setState(LinkedList<String> state) {
+		this.state = state;
 	}
 
 }

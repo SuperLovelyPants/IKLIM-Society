@@ -1,9 +1,6 @@
 package iklim.society.model.instance;
 
-import iklim.society.model.ModelManager;
-import iklim.society.model.base.AbstractBaseModel;
-
-public class Item extends AbstractModelInstance{
+public class Item extends AbstractCapableInstance{
 	
 	public Item(String id, String type) {
 		super(id, type);

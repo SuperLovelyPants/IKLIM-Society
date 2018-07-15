@@ -13,15 +13,10 @@ public abstract class AbstractModelInstance {
 	
 	private final String id;
 	private final String type;
-	private final HashMap<String, String> hasProperties;
-	
-	private AbstractBaseModel baseModel;
 	
 	public AbstractModelInstance(String id, String type) {
 		this.id = id;
 		this.type = type;
-		hasProperties = new HashMap<String, String>();
-		this.baseModel = ModelManager.getInstance().getItemModel(type);
 	}
 	
 	public boolean isType(String type) {
@@ -41,28 +36,8 @@ public abstract class AbstractModelInstance {
 		return type;
 	}
 
-	public int getPropertyNum(){
-		return this.hasProperties.size();
-	}
-	
-	public Collection<String> getAllPropertySet(){
-		return hasProperties.values();
-	}
-	
-	public String getPropertySet(String key) {
-		return hasProperties.get(key);
-	}
-	
-	public void addProperty(String name, String pi) {
-		hasProperties.put(name, pi);
-	}
-
 	public AbstractBaseModel getBaseModel() {
-		return baseModel;
+		return ModelManager.getInstance().getBaseModel(type);
 	}
 
-	public void setBaseModel(AbstractBaseModel baseModel) {
-		this.baseModel = baseModel;
-	}
-	
 }

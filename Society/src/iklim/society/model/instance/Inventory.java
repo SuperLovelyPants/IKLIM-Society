@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class Inventory extends AbstractModelInstance {
 
-	private int Size;
+	private int size;
 	private HashMap<String, Item> contents;
 	
 	public Inventory(String id, String type) {
@@ -12,11 +12,11 @@ public class Inventory extends AbstractModelInstance {
 	}
 
 	public int getSize() {
-		return Size;
+		return size;
 	}
 
 	public void setSize(int size) {
-		Size = size;
+		this.size = size;
 	}
 
 	public HashMap<String, Item> getContents() {

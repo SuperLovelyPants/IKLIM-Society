@@ -5,13 +5,17 @@
       {
         "id" : "farmerAgent001",
         "type" : "Agent",
-        "workerCaperbility" : [
-          "farmerCaperbility"
+        "workerCapability" : [
+          "farmerCapability"
+        ],
+        "targetCapability" : [
         ],
         "hasProperties" : [
           "wielding001",
           "inventory001",
           "farmerProperty001"
+        ],
+        "hasStateProperties" : [
         ]
       }
     ],
@@ -20,22 +24,32 @@
       {
         "id" : "Farm001",
         "type" : "Farm",
+        "workerCapability" : [
+        ],
+        "targetCapability" : [
+        ],
         "hasProperties" : [
           "structureProperty001",
           "builtIn001"
+        ],
+        "hasStateProperties" : [
+          "Cultivating"
         ]
       },
       {
         "id" : "FarmLand001",
         "type" : "FarmLand",
-        "targetCaperbility" : [
-          "farmerCaperbility"
+        "workerCapability" : [
+        ],
+        "targetCapability" : [
+          "farmerCapability"
         ],
         "hasProperties" : [
           "inventory002",
           "structureProperty002",
-          "cultivateProperty001",
-          "FarmLandState/Cultivating"
+          "cultivateProperty001"
+        ],
+        "hasStateProperties" : [
         ]
       }
     ],
@@ -44,18 +58,30 @@
       {
         "id" : "ironHoe001",
         "type" : "Hoe",
+        "workerCapability" : [
+        ],
+        "targetCapability" : [
+        ],
         "hasProperties" : [
           "equipmentProperty001"
+        ],
+        "hasStateProperties" : [
         ]
       },
       {
         "id" : "wheat001",
         "type" : "Wheat",
+        "workerCapability" : [
+        ],
+        "targetCapability" : [
+        ],
         "hasProperties" : [
           "itemProperty001",
           "plantableProperty001"
+        ],
+        "hasStateProperties" : [
         ]
-      },
+      }
     ],
 
     "PropertySet" : [
@@ -123,7 +149,7 @@
     "Inventory" : [
       {
         "id" : "inventory001",
-        "type" : "inventory",
+        "type" : "Inventory",
         "size" : "100",
         "content" : [
           "wheat001",
@@ -131,14 +157,15 @@
       },
       {
         "id" : "inventory002",
-        "type" : "inventory",
+        "type" : "Inventory",
         "size" : 10,
         "content" : [
         ]
       },
       {
         "id" : "builtIn001",
-        "type" : "builtIn",
+        "type" : "Inventory",
+        "size" : "100",
         "content" : [
           "farmLand001"
         ]
@@ -150,6 +177,7 @@
     {
       "id" : "GameThing",
       "name" : "GameThing",
+      "parent"  : "null"
     },
     {
       "id" : "MaterialThing",
@@ -159,21 +187,21 @@
         {
           "id" : "id",
           "type" : "String"
-        }
+        },
         {
           "id" : "type",
           "type" : "String"
-        }
+        },
         {
           "name" : "hasProperty",
           "type" : "propertySet"
-        }
+        },
         {
-          "name" : "wokerCaperbility",
+          "name" : "wokerCapability",
           "type" : "List<String>"
-        }
+        },
         {
-          "name" : "targetCaperbility",
+          "name" : "targetCapability",
           "type" : "List<String>"
         }
       ]
@@ -217,19 +245,19 @@
         {
           "id" : "precondition",
           "type" : "String"
-        }
+        },
         {
           "name" : "argument",
           "type" : "List<String>"
-        }
+        },
         {
           "name" : "ruleFactor",
           "type" : "String"
-        }
+        },
         {
           "name" : "rule",
           "type" : "String"
-        }
+        },
         {
           "name" : "Listener",
           "type" : "List<String>"
@@ -255,7 +283,7 @@
         {
           "name" : "states",
           "type" : "List<String>"
-        }
+        },
         {
           "name" : "stateRule",
           "type" : "String"
@@ -275,6 +303,8 @@
     }
 
   ],
+
+
   "PropertySet" : [
     {
       "id" : "CultivateProperty",
@@ -312,10 +342,12 @@
       ]
     }
   ],
+
+
   "CapabilityProperty" : [
     {
-      "id" : "farmerCaperbility",
-      "name" : "farmerCaperbility",
+      "id" : "farmerCapability",
+      "name" : "farmerCapability",
       "parent" : "CapabilityProperty",
       "capable" : [
         "PlantingWork",
@@ -324,6 +356,8 @@
       ]
     }
   ],
+
+
   "State" : [
     {
       "id" : "CultivatingState",
@@ -333,34 +367,45 @@
         "Cultivating",
         "Harvestable",
         "RestLand"
-      ]
+      ],
+      "stateRule" : ""
     },
     {
       "id" : "Cultivating",
       "name" : "Cultivating",
       "parent" : "CultivatingState",
+      "states" : [
+      ],
+      "stateRule" : ""
     },
     {
       "id" : "Harvestable",
       "name" : "Harvestable",
-      "parent" : "CultivatingState"
+      "parent" : "CultivatingState",
+      "states" : [
+      ],
+      "stateRule" : ""
     },
     {
       "id" : "RestLand",
       "name" : "RestLand",
-      "parent" : "CultivateState"
-    },
+      "parent" : "CultivateState",
+      "states" : [
+      ],
+      "stateRule" : ""
+    }
   ],
   "Work" : [
     {
       "id" : "CultivatingWork",
       "name" : "CultivatingWork",
       "parent" : "Work",
-      "worker" : "Farmer",
+      "trigger" : [
+      ],
       "precondition" : [
         "ex) target/state == Cultivating"
       ],
-      "RuleSet" : [
+      "ruleSet" : [
         "CultivatingRule"
       ]
     },
@@ -368,24 +413,24 @@
       "id" : "PlantingWork",
       "name" : "PlantingWork",
       "parent" : "Work",
+      "trigger" : [
+      ],
       "precondition" : [
         "ex) target/state == RestLand"
       ],
-      "argument" : [
-        {
-          "name" : "seed",
-          "type" : "Plantable"
-        }
+     "ruleSet" : [
+        "CultivatingRule"
+      ]
+    },
+    {
+      "id" : "HarvestingWork",
+      "name" : "HarvestingWork",
+      "parent" : "Work",
+      "trigger" : [
       ],
-      "workDetail" : [
-        {
-          "targetValue" : "target/CultivatingState",
-          "rule" : "target/CultivatingState == Cultivating",
-        }
-        {
-          "targetValue" : "worker/Inventory",
-          "rule" : "delete seed"
-        }
+      "precondition" : [
+      ],
+     "ruleSet" : [
       ]
     },
     {
@@ -393,20 +438,26 @@
       "name" : "HarvestCheck",
       "parent" : "Work",
       "trigger" : [
-        "target/CultivateProperty/growth",
+        "target/CultivateProperty/growth"
       ],
       "precondition" : [
-        "target/CultivateProperty/growth >= target/CultivateProperty/growth/MaxValue",
+        "target/CultivateProperty/growth >= target/CultivateProperty/growth/MaxValue"
       ],
-      "RuleSet" : [
+      "ruleSet" : [
           "CultivatingStateShiftingToHarvestableRule"
       ]
-    },
+    }
   ],
+
+
   "Rule" : [
     {
       "id" : "CultivatingStateShiftingToHarvestableRule",
       "name" : "CultivatingStateShiftingToHarvestableRule",
+      "parent" : "Rule",
+      "argument" : [
+      ],
+      "precondition" : "",
       "targetValue" : "target/CultivatingState",
       "evaluate" : "target/CultivatingState = Harvestable"
     },
@@ -414,8 +465,9 @@
       "id" : "CultivatingRule",
       "name" : "CultivatingRule",
       "parent" : "Rule",
+      "argument" : [
+      ],
       "precondition" : [
-
       ],
       "targetValue" : "target/CultivateProperty/growth",
       "parameters" : [
@@ -449,7 +501,7 @@
     {
       "id" : "Equipment",
       "name" : "Equipment",
-      "parent" : "Item",
+      "parent" : "Item"
     },
     {
       "id" : "Hoe",
@@ -461,12 +513,17 @@
     {
       "id" : "Farm",
       "name" : "Farm",
-      "parent" : "Structure"
+      "parent" : "Structure",
+      "buildable" : [
+      	"farmLand"
+      ]
     },
     {
       "id" : "FarmLand",
       "name" : "FarmLand",
-      "parent" : "Structure"
+      "parent" : "Structure",
+      "buildable" : [
+      ]
     }
   ]
 }

@@ -24,6 +24,7 @@ public class BaseWork extends AbstractExecutable {
 	public LinkedList<String> getRuleSet() {
 		return ruleSet;
 	}
+	
 	@Override
 	public Collection<String> execute(String worker, String target, Argument ...args){
 		LinkedList<String> tempwork = new LinkedList<String>();

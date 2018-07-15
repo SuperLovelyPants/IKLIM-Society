@@ -1,6 +1,6 @@
 package iklim.society.model.instance;
 
-public class Structure extends CapableInstance{
+public class Structure extends AbstractCapableInstance{
 
 	public Structure(String id, String type) {
 		super(id, type);

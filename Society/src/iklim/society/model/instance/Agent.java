@@ -8,7 +8,7 @@ import iklim.society.model.instance.property.PropertyInstance;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 
-public class Agent extends CapableInstance {
+public class Agent extends AbstractCapableInstance {
 
 	public Agent(String id, String type) {
 		super(id, type);

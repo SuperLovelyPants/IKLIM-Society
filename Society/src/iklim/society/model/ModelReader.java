@@ -15,6 +15,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
+import iklim.society.model.base.AbstractCapable;
 import iklim.society.model.base.BaseCapabilityProperty;
 import iklim.society.model.base.BaseItem;
 import iklim.society.model.base.BasePropertySet;
@@ -24,6 +25,9 @@ import iklim.society.model.base.BaseWork;
 import iklim.society.model.base.rule.BaseArgument;
 import iklim.society.model.base.rule.Rule;
 import iklim.society.model.base.utility.Precondition;
+import iklim.society.model.instance.AbstractCapableInstance;
+import iklim.society.model.instance.AbstractMaterialInstance;
+import iklim.society.model.instance.AbstractModelInstance;
 import iklim.society.model.instance.Agent;
 import iklim.society.model.instance.Inventory;
 import iklim.society.model.instance.Item;
@@ -31,6 +35,7 @@ import iklim.society.model.instance.PropertySet;
 import iklim.society.model.instance.Structure;
 import iklim.society.model.instance.argument.Argument;
 import iklim.society.model.instance.argument.IndividualArgument;
+import iklim.society.model.instance.property.PropertyInstance;
 
 public class ModelReader {
 
@@ -50,9 +55,11 @@ public class ModelReader {
 
 			buildPropertySet(root.get(ModelScheme.ObjectPropertySet).getAsJsonArray(), manager);
 			buildState(root.get(ModelScheme.ObjectState).getAsJsonArray(), manager);
-			buildCapabilityProperty(root.get(ModelScheme.ObjectCapabilityProperty).getAsJsonArray(), manager);
+			
 			buildRule(root.get(ModelScheme.ObjectRule).getAsJsonArray(), manager, workArgumentBuffer);
 			buildWork(root.get(ModelScheme.ObjectWork).getAsJsonArray(), manager, ruleEffectWorkBuffer);
+			buildCapabilityProperty(root.get(ModelScheme.ObjectCapabilityProperty).getAsJsonArray(), manager);
+			
 			buildItem(root.get(ModelScheme.ObjectItem).getAsJsonArray(), manager);
 			buildStructure(root.get(ModelScheme.ObjectStructure).getAsJsonArray(), manager);
 
@@ -110,6 +117,7 @@ public class ModelReader {
 		bs.setId(stateObject.get(ModelScheme.PropertyID).getAsString());
 		bs.setName(stateObject.get(ModelScheme.PropertyName).getAsString());
 		bs.setParent(stateObject.get(ModelScheme.PropertyParentType).getAsString());
+		stateObject.get(ModelScheme.PropertyStateRule).getAsString();
 		bs.setStateRule(stateObject.get(ModelScheme.PropertyStateRule).getAsString());
 		LinkedList<String> states = new LinkedList<String>();
 		JsonArray statesJsonArray = stateObject.get(ModelScheme.PropertyStates).getAsJsonArray();
@@ -133,13 +141,12 @@ public class ModelReader {
 		bcp.setId(capabilityPropertyObject.get(ModelScheme.PropertyID).getAsString());
 		bcp.setName(capabilityPropertyObject.get(ModelScheme.PropertyName).getAsString());
 		bcp.setParent(capabilityPropertyObject.get(ModelScheme.PropertyParentType).getAsString());
-		LinkedList<String> capabilityProperties = new LinkedList<String>();
+
 		JsonArray capabilityPropertiesJsonArray = capabilityPropertyObject.get(ModelScheme.PropertyCapable)
 				.getAsJsonArray();
 		for (JsonElement capabilityPropertyJsonElement : capabilityPropertiesJsonArray) {
-			capabilityProperties.add(capabilityPropertyJsonElement.getAsString());
+			bcp.addCapable(capabilityPropertyJsonElement.getAsString());
 		}
-		bcp.setCapabilityProperties(capabilityProperties);
 
 		return bcp;
 	}
@@ -283,60 +290,107 @@ public class ModelReader {
 	}
 
 	private static void buildInstance(JsonObject joInstance, ModelManager manager) {
+
+		buildPropertySetInstance(joInstance.get(ModelScheme.ObjectPropertySet).getAsJsonArray(), manager);
+		buildInventoryInstance(joInstance.get(ModelScheme.ObjectInventory).getAsJsonArray(), manager);
+
 		buildAgentInstance(joInstance.get(ModelScheme.ObjectAgent).getAsJsonArray(), manager);
 		buildStructureInstance(joInstance.get(ModelScheme.ObjectStructure).getAsJsonArray(), manager);
-		buildItemInstance(joInstance.get(ModelScheme.ObjectInstance).getAsJsonArray(), manager);
-		buildInventoryInstance(joInstance.get(ModelScheme.ObjectItem).getAsJsonArray(), manager);
-		buildPropertySetInstance(joInstance.get(ModelScheme.ObjectPropertySet).getAsJsonArray(), manager);
+		buildItemInstance(joInstance.get(ModelScheme.ObjectItem).getAsJsonArray(), manager);
+
 	}
 	
-	private static void buildAgentInstance(JsonArray jaAgent, ModelManager manager) {
-		for (JsonElement agentElement : jaAgent) {
+	private static void setCapabilityProperties(JsonObject object, AbstractCapableInstance instance) {
+		JsonArray workerCapabilityPropertyArray = object.get(ModelScheme.PropertyWorkerCapability)
+				.getAsJsonArray();
+		for (JsonElement workerCapabilityElement : workerCapabilityPropertyArray) {
+			instance.addWorkerCapability(workerCapabilityElement.getAsString());
+		}
+
+		JsonArray targetCapabilityPropertyArray = object.get(ModelScheme.PropertyTargetCapability)
+				.getAsJsonArray();
+		for (JsonElement targetCapabilityElement : targetCapabilityPropertyArray) {
+			instance.addTargetCapability(targetCapabilityElement.getAsString());
+		}
+	}
+	
+	private static void setPropertySet(JsonObject object, AbstractMaterialInstance instance) {
+		JsonArray propertySetArray = object.get(ModelScheme.PropertyHasProperties).getAsJsonArray();
+		for (JsonElement propertySetElement : propertySetArray) {
+			if (ModelManager.getInstance().getInstanceType(propertySetElement.getAsString()).equals("Inventory")) {// 지금으로썬 모든 인벤토리 객체의 타입은 인벤토리이므로, 이 편이 편하다
+				instance.setInventory(propertySetElement.getAsString());
+			} else {
+				instance.addPropertySet(propertySetElement.getAsString());
+			}
+		}
+		
+		JsonArray statePropertyArray = object.get(ModelScheme.PropertyHasStateProperties).getAsJsonArray();
+		for (JsonElement statePropertyElement : statePropertyArray) {
+			instance.addStateProperty(statePropertyElement.getAsString());
+		}
+	}
+
+	private static void buildAgentInstance(JsonArray agentArray, ModelManager manager) {
+		for (JsonElement agentElement : agentArray) {
 			JsonObject agentObject = agentElement.getAsJsonObject();
 			String id = agentObject.get(ModelScheme.PropertyID).getAsString();
 			String type = agentObject.get(ModelScheme.PropertyType).getAsString();
 			Agent agent = new Agent(id, type);
-			manager.getInstanceAgent().put(id, agent);
+
+			setCapabilityProperties(agentObject, agent);
+			setPropertySet(agentObject, agent);
+
+			manager.addAgentInstance(agent);
 		}
-	}	
-	
-	private static void buildStructureInstance(JsonArray jaStructure, ModelManager manager) {
-		for (JsonElement structureElement : jaStructure) {
+	}
+
+	private static void buildStructureInstance(JsonArray structureArray, ModelManager manager) {
+		for (JsonElement structureElement : structureArray) {
 			JsonObject structureObject = structureElement.getAsJsonObject();
 			String id = structureObject.get(ModelScheme.PropertyID).getAsString();
 			String type = structureObject.get(ModelScheme.PropertyType).getAsString();
 			Structure structure = new Structure(id, type);
-			manager.getInstanceStructure().put(id, structure);
+			
+			setCapabilityProperties(structureObject, structure);
+			setPropertySet(structureObject, structure);
+			
+			manager.addStructureInstance(structure);
 		}
-	}	
-	
+	}
+
 	private static void buildItemInstance(JsonArray itemArray, ModelManager manager) {
 		for (JsonElement itemElement : itemArray) {
 			JsonObject itemObject = itemElement.getAsJsonObject();
 			String id = itemObject.get(ModelScheme.PropertyID).getAsString();
 			String type = itemObject.get(ModelScheme.PropertyType).getAsString();
 			Item item = new Item(id, type);
-			manager.getInstanceItem().put(id, item);
+			
+			setCapabilityProperties(itemObject, item);
+			setPropertySet(itemObject, item);
+			
+			manager.addItemInstance(item);
 		}
-	}	
-	
+	}
+
 	private static void buildInventoryInstance(JsonArray inventoryArray, ModelManager manager) {
 		for (JsonElement inventoryElement : inventoryArray) {
 			JsonObject invnetoryObject = inventoryElement.getAsJsonObject();
 			String id = invnetoryObject.get(ModelScheme.PropertyID).getAsString();
 			String type = invnetoryObject.get(ModelScheme.PropertyType).getAsString();
-			Inventory invnetory = new Inventory(id, type);
-			manager.getInstanceInventory().put(id, invnetory);
+			Inventory inventory = new Inventory(id, type);
+			
+			manager.addInventoryInstance(inventory);
 		}
-	}	
-	
+	}
+
 	private static void buildPropertySetInstance(JsonArray propertySetArray, ModelManager manager) {
 		for (JsonElement propertySetElement : propertySetArray) {
 			JsonObject propertySetObject = propertySetElement.getAsJsonObject();
 			String id = propertySetObject.get(ModelScheme.PropertyID).getAsString();
 			String type = propertySetObject.get(ModelScheme.PropertyType).getAsString();
 			PropertySet propertySet = new PropertySet(id, type);
-			manager.getInstancePropertySet().put(id, propertySet);
+			
+			manager.addPropertySetInstance(propertySet);
 		}
 	}
 

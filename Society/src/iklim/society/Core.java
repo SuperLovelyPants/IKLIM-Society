@@ -2,20 +2,6 @@ package iklim.society;
 
 import iklim.society.model.ModelManager;
 import iklim.society.model.ModelReader;
-import iklim.society.model.ModelScheme;
-import iklim.society.model.base.BaseRule;
-import iklim.society.model.base.BaseWork;
-import iklim.society.model.base.Result;
-import iklim.society.model.base.rule.AddValues;
-import iklim.society.model.base.rule.Multiplier;
-import iklim.society.model.base.rule.Rule;
-import iklim.society.model.instance.AbstractModelInstance;
-import iklim.society.model.instance.Agent;
-import iklim.society.model.instance.Structure;
-import iklim.society.model.instance.Work;
-import iklim.society.model.instance.property.FloatPropertyInstance;
-import iklim.society.model.instance.property.IntPropertyInstance;
-import iklim.society.model.instance.property.PropertyInstance;
 
 public class Core {
 	private ModelManager 		model;
@@ -29,64 +15,65 @@ public class Core {
 	
 
 	private void start() {
-		while(true){
-			testWork();
-			model.printInstance();
-			
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+//		while(true){
+//			testWork();
+//			model.printInstance();
+//			
+//			try {
+//				Thread.sleep(1000);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//		}
+		
 		
 	}
 
 
 
-	private void testWork() {
-		Work w = new Work("work001","GrowthWork","farmer001", "farmland001");
-		performWork(w);
-		
-	}
-
-
-
-	private void performWork(Work w) {
-		
-		BaseWork bw = model.getBaseWork(w.getWorkType());
-		
-		AbstractModelInstance worker = model.get(w.getWorker());
-		if(!isMatched(bw.worker, worker)){
-			System.out.println("worker type is mismatched");
-		}
-		
-		AbstractModelInstance target = model.get(w.getTarget());
-		if(!isMatched(bw.target, target)){
-			System.out.println("target type is mismatched");
-		}
-		
-		BaseRule rule = model.getBaseRule(bw.getRule());
-		
-		if(!conditionSadisfied(rule, worker, target)){
-			System.out.println("Condition not Sadisfied");
-		} 
-		
-		System.out.println(rule.getArgument());
-		System.out.println(rule.getResultSet());
-		
-		for(Result result : rule.getResultSet()) {
-			String[] s = result.getTargetValue().split("/");
-			if(s[0].equals("target")) {
-				PropertyInstance prop = target.getProperty(s[1]);
-				System.out.println("프로퍼티 growth 출력: " + prop);
-			} else if(s[0].equals("worker")) {
-				PropertyInstance prop = worker.getProperty(s[1]);
-				System.out.println("프로퍼티 WorkForce 출력: " + prop);
-			}
-		}
-		
-		
+//	private void testWork() {
+//		Work w = new Work("work001","GrowthWork","farmer001", "farmland001");
+//		performWork(w);
+//		
+//	}
+//
+//
+//
+//	private void performWork(Work w) {
+//		
+//		BaseWork bw = model.getBaseWork(w.getWorkType());
+//		
+//		AbstractModelInstance worker = model.get(w.getWorker());
+//		if(!isMatched(bw.worker, worker)){
+//			System.out.println("worker type is mismatched");
+//		}
+//		
+//		AbstractModelInstance target = model.get(w.getTarget());
+//		if(!isMatched(bw.target, target)){
+//			System.out.println("target type is mismatched");
+//		}
+//		
+//		BaseRule rule = model.getBaseRule(bw.getRule());
+//		
+//		if(!conditionSadisfied(rule, worker, target)){
+//			System.out.println("Condition not Sadisfied");
+//		} 
+//		
+//		System.out.println(rule.getArgument());
+//		System.out.println(rule.getResultSet());
+//		
+//		for(Result result : rule.getResultSet()) {
+//			String[] s = result.getTargetValue().split("/");
+//			if(s[0].equals("target")) {
+//				PropertyInstance prop = target.getProperty(s[1]);
+//				System.out.println("프로퍼티 growth 출력: " + prop);
+//			} else if(s[0].equals("worker")) {
+//				PropertyInstance prop = worker.getProperty(s[1]);
+//				System.out.println("프로퍼티 WorkForce 출력: " + prop);
+//			}
+//		}
+//		
+//		
 //		for(PostCondition con : bw.postCondition){
 //			String[] s = con.type.split("/");
 //			if(s[0].equals("worker")){
@@ -118,14 +105,14 @@ public class Core {
 //				ip.setValue(ip.getValue()+changeValue); 
 //			}
 //		}
-		
-		
-	}
-
-
-
-	private boolean conditionSadisfied(BaseRule br,
-			AbstractModelInstance worker, AbstractModelInstance target) {
+//		
+//		
+//	}
+//
+//
+//
+//	private boolean conditionSadisfied(BaseRule br,
+//			AbstractModelInstance worker, AbstractModelInstance target) {
 //		for (PreCondition con : bw.preCondition) {
 //			String[] s = con.type.split("/");
 //			if(s[0].equals("worker")){
@@ -140,82 +127,82 @@ public class Core {
 //				
 //			}
 //		}
-		System.out.println("컨디션 정보 : " + br.getCondition());
-		System.out.println("현재 컨디션은 무조건 만족됨");
-		
-		return true;
-	}
-
-
-
-	private float processExpression(Rule r, AbstractModelInstance worker,	AbstractModelInstance target) {
-		if(r.getValue().getMultiplier().size()>0){
-			float expressionResult = 1;
-			for (Multiplier mul : r.getValue().getMultiplier()) {
-				expressionResult*=processMultiplier(r, mul, worker, target);
-			}
-			return expressionResult;
-		}
-		return 0;
-	}
-
-
-
-	private float processMultiplier(Rule r, Multiplier mul,
-			AbstractModelInstance worker, AbstractModelInstance target) {
-		if(mul.getAdders().size()>0){
-			float value = 0;
-			for(AddValues add : mul.getAdders()){
-				value += processAdder(r, add, worker, target);
-			}
-			return value;
-		}
-		return 0;
-	}
-
-
-
-	private float processAdder(Rule r, AddValues add,
-			AbstractModelInstance worker, AbstractModelInstance target) {
-		float value = 0;
-		if('0' <= add.getValue().charAt(0) && '9' >= add.getValue().charAt(0)){
-			value += Float.valueOf(add.getValue());
-		}else{
-			String[] s = add.getValue().split("/");
-			if(s[0].equals("worker")){
-				PropertyInstance prop = worker.getProperty(s[1]);
-				if(ModelScheme.ValueIntValue.equals(prop.getType())){
-					IntPropertyInstance ip = (IntPropertyInstance)prop;
-					value+=ip.getValue();
-				}
-			}else if(s[0].equals("this")){
-				value+=r.getConstantValues().get(s[1]).intValue();
-			}
-		}
-		return value;
-	}
-
-
-
-	private boolean isMatched(String type, AbstractModelInstance target) {
-		if(type.equals(target.getType())) return true;
-		if(target instanceof Agent){
-			Agent s = (Agent)target;
-			if(type == s.getAgentType()){
-				return true;
-			}
-			
-		}
-		if(target instanceof Structure){
-			Structure s = (Structure)target;
-			if(type.equals(s.getStructureType())){
-				return true;
-			}
-			
-		}
-		
-		return false;
-	}
+//		System.out.println("컨디션 정보 : " + br.getCondition());
+//		System.out.println("현재 컨디션은 무조건 만족됨");
+//		
+//		return true;
+//	}
+//
+//
+//
+//	private float processExpression(Rule r, AbstractModelInstance worker,	AbstractModelInstance target) {
+//		if(r.getValue().getMultiplier().size()>0){
+//			float expressionResult = 1;
+//			for (Multiplier mul : r.getValue().getMultiplier()) {
+//				expressionResult*=processMultiplier(r, mul, worker, target);
+//			}
+//			return expressionResult;
+//		}
+//		return 0;
+//	}
+//
+//
+//
+//	private float processMultiplier(Rule r, Multiplier mul,
+//			AbstractModelInstance worker, AbstractModelInstance target) {
+//		if(mul.getAdders().size()>0){
+//			float value = 0;
+//			for(AddValues add : mul.getAdders()){
+//				value += processAdder(r, add, worker, target);
+//			}
+//			return value;
+//		}
+//		return 0;
+//	}
+//
+//
+//
+//	private float processAdder(Rule r, AddValues add,
+//			AbstractModelInstance worker, AbstractModelInstance target) {
+//		float value = 0;
+//		if('0' <= add.getValue().charAt(0) && '9' >= add.getValue().charAt(0)){
+//			value += Float.valueOf(add.getValue());
+//		}else{
+//			String[] s = add.getValue().split("/");
+//			if(s[0].equals("worker")){
+//				PropertyInstance prop = worker.getProperty(s[1]);
+//				if(ModelScheme.ValueIntValue.equals(prop.getType())){
+//					IntPropertyInstance ip = (IntPropertyInstance)prop;
+//					value+=ip.getValue();
+//				}
+//			}else if(s[0].equals("this")){
+//				value+=r.getConstantValues().get(s[1]).intValue();
+//			}
+//		}
+//		return value;
+//	}
+//
+//
+//
+//	private boolean isMatched(String type, AbstractModelInstance target) {
+//		if(type.equals(target.getType())) return true;
+//		if(target instanceof Agent){
+//			Agent s = (Agent)target;
+//			if(type == s.getAgentType()){
+//				return true;
+//			}
+//			
+//		}
+//		if(target instanceof Structure){
+//			Structure s = (Structure)target;
+//			if(type.equals(s.getStructureType())){
+//				return true;
+//			}
+//			
+//		}
+//		
+//		return false;
+//	}
 
 
 

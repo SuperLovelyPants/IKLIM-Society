@@ -18,6 +18,7 @@ public class ModelScheme {
 	public static final String ObjectInstance				= "Instance";
 	public static final String ObjectPropertySet			= "PropertySet";
 	public static final String ObjectBaseModel				= "BaseModel";
+	public static final String ObjectInventory				= "Inventory";
 	
 	
 	public static final String PropertyID					= "id";
@@ -44,7 +45,7 @@ public class ModelScheme {
 	public static final String PropertyMinValue				= "minValue";
 	public static final String PropertyParentType 			= "parent";
 	public static final String PropertySize					= "size";
-	public static final String PropertyArgument				= "arguments";
+	public static final String PropertyArgument				= "argument";
 	public static final String PropertyCondition			= "condition";
 	public static final String PropertyResultSet			= "resultSet";
 	public static final String PropertyRule					= "rule";
@@ -56,6 +57,10 @@ public class ModelScheme {
 	public static final String PropertyTrigger				= "trigger";
 	public static final String PropertyPrecondition			= "precondition";
 	public static final String PropertyRuleSet				= "ruleSet";
+	public static final String PropertyHasProperties		= "hasProperties";
+	public static final String PropertyWorkerCapability		= "workerCapability";
+	public static final String PropertyTargetCapability		= "targetCapability";
+	public static final String PropertyHasStateProperties	= "hasStateProperties";
 	
 	public static final String PropertySet					= "propertySet";
 	
