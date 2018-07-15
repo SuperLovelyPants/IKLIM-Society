@@ -1,20 +1,41 @@
 package iklim.society;
 
+import java.util.Collection;
+
 import iklim.society.model.ModelManager;
 import iklim.society.model.ModelReader;
+import iklim.society.model.instance.Work;
 
 public class Core {
 	private ModelManager 		model;
 	private WorkExecutor		executor;
+	private WorkManager			works;
 	
 	public Core() {
+		works = new WorkManager();
 		model = ModelReader.parseModel("./model/BaseModel.mdl");
+		
+		
+		Collection<Work> cyclicWork = model.getCyclicWorks();
+		works.putAllCyclicWork(cyclicWork);
+		
+		
 		start();
 	}
 
 	
 
 	private void start() {
+		while(true) {
+			addCyclicWork();
+			doWork();
+		}
+		
+		
+		
+		
+		
+		
 //		while(true){
 //			testWork();
 //			model.printInstance();
@@ -27,6 +48,21 @@ public class Core {
 //		}
 		
 		
+	}
+
+	private void doWork() {
+		executor.excute();
+		
+	}
+
+
+
+	private void addCyclicWork() {
+		executor.addAllWork(works.getAllCyclicWork());
+	}
+	
+	public void addWork(Work w) {
+		executor.addWork(w);
 	}
 
 
@@ -203,6 +239,9 @@ public class Core {
 //		
 //		return false;
 //	}
+
+
+
 
 
 

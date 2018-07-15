@@ -18,4 +18,12 @@ public class WorkExecutor {
 			}
 		}
 	}
+	
+	public void addAllWork(Collection<Work> works) {
+		this.works.addAll(works);
+	}
+	
+	public void addWork(Work w) {
+		this.works.add(w);
+	}
 }
