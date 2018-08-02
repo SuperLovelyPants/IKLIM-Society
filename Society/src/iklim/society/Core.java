@@ -1,6 +1,7 @@
 package iklim.society;
 
 import java.util.Collection;
+import java.util.HashMap;
 
 import iklim.society.model.ModelManager;
 import iklim.society.model.ModelReader;
@@ -15,7 +16,6 @@ public class Core {
 		works = new WorkManager();
 		model = ModelReader.parseModel("./model/BaseModel.mdl");
 		
-		
 		Collection<Work> cyclicWork = model.getCyclicWorks();
 		works.putAllCyclicWork(cyclicWork);
 		
@@ -26,9 +26,12 @@ public class Core {
 	
 
 	private void start() {
+		
 		while(true) {
 			addCyclicWork();
 			doWork();
+			
+			
 		}
 		
 		

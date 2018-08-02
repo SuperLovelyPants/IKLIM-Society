@@ -1,0 +1,752 @@
+/**
+ * JavaCC template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+
+ */
+options
+{
+  static = true;
+}
+
+PARSER_BEGIN(MyNewGrammar)
+package javaCC;
+import node.*;
+import visitor.*;
+import java.util.LinkedList;
+
+public class MyNewGrammar
+{
+  public static void main(String args []) throws ParseException
+  {
+    MyNewGrammar parser = new MyNewGrammar(System.in);
+    while (true)
+    {
+      System.out.println("Reading from standard input...");
+      System.out.print("Enter an expression like \"1+(2+3)*4;\" :");
+      try
+      {
+        MyNewGrammar.Component();
+      }
+      catch (Exception e)
+      {
+        System.out.println("NOK.");
+        System.out.println(e.getMessage());
+        MyNewGrammar.ReInit(System.in);
+      }
+      catch (Error e)
+      {
+        System.out.println("Oops.");
+        System.out.println(e.getMessage());
+        break;
+      }
+    }
+  }
+}
+
+PARSER_END(MyNewGrammar)
+
+SKIP :
+{
+  " "
+| "\t"
+| "\r"
+| "\f"
+| "\n"
+}
+
+TOKEN :
+{
+  < ELSE : "else" >
+| < FALSE : "false" >
+| < IF : "if" >
+| < INT : "int" >
+| < TRUE : "true" >
+}
+
+TOKEN :
+{
+  < TARGET : "target" >
+| < WORKER : "worker" >
+| < TARGET_VALUE : "targetValue" >
+| < THIS : "this" >
+}
+
+TOKEN :
+{
+  < ASSIGN : "=" >
+| < GT : ">" >
+| < LT : "<" >
+| < BANG : "!" >
+| < EQ : "==" >
+| < LE : "<=" >
+| < GE : ">=" >
+| < NE : "!=" >
+| < SC_OR : "||" >
+| < SC_AND : "&&" >
+| < INCR : "++" >
+| < DECR : "--" >
+| < PLUS : "+" >
+| < MINUS : "-" >
+| < STAR : "*" >
+| < SLASH : "/" >
+| < PLUSASSIGN : "+=" >
+| < MINUSASSIGN : "-=" >
+| < STARASSIGN : "*=" >
+| < SLASHASSIGN : "/=" >
+}
+
+TOKEN :
+{
+  < INTEGER_LITERAL : 
+    < DECIMAL_LITERAL > 
+  >
+| 
+  < #DECIMAL_LITERAL : [ "0"-"9" ] ([ "0"-"9" ])* >
+}
+
+TOKEN :
+{
+  < IDENTIFIER :
+    < LETTER >
+    (
+      < LETTER >
+    | < DIGIT >
+    )* >
+}
+
+TOKEN :
+{
+  < DIGIT : [ "0"-"9" ] >
+| < LETTER : 
+    [ 
+    "$", 
+    "A"-"Z", 
+    "_", 
+    "a"-"z", 
+    "\u00c0"-"\u00d6", 
+    "\u00d8"-"\u00f6", 
+    "\u00f8"-"\u00ff", 
+    "\u0100"-"\u1fff", 
+    "\u3040"-"\u318f", 
+    "\u3300"-"\u337f", 
+    "\u3400"-"\u3d2d", 
+    "\u4e00"-"\u9fff", 
+    "\uf900"-"\ufaff" 
+    ] 
+  >
+}
+
+TOKEN :
+{
+  < LPAREN : "(" >
+| < RPAREN : ")" >
+| < LBRACE : "{" >
+| < RBRACE : "}" >
+| < LBRACKET : "[" >
+| < RBRACKET : "]" >
+| < SEMICOLON : ";" >
+| < COMMA : "," >
+| < DOT : "." >
+}
+
+ASTStatement Component() :
+{
+  ASTStatement statement;
+  BlockStatement b = new BlockStatement();
+  LinkedList statements = new LinkedList();
+}
+{
+  (
+    statement = Statement()
+    {
+      statements.add(statement);
+    }
+  )*
+  < EOF >
+  {
+    b.setStatements(statements);
+    return b;
+  }
+}
+
+ASTStatement Statement() :
+{
+  ASTStatement statement;
+  ASTExpression exp;
+}
+{
+  (
+    statement = Block()
+  | statement = IfStatement()
+  | statement = StatementExpression() ";"
+  )
+  {
+    return statement;
+  }
+}
+
+BlockStatement Block() :
+{
+  BlockStatement block = new BlockStatement();
+  LinkedList statements = new LinkedList();
+  ASTStatement s;
+}
+{
+  (
+    "{"
+    (
+      s = Statement()
+      {
+        statements.add(s);
+      }
+    )*
+    "}"
+  )
+  {
+    block.setStatements(statements);
+    return block;
+  }
+}
+
+ASTStatement StatementExpression() :
+{
+  ASTExpression var;
+  Token t;
+  String operator;
+  ASTExpression expression;
+}
+{
+  (
+    LOOKAHEAD(2)
+    (
+      LOOKAHEAD(2)
+      var = Element() t = < INCR >
+    | LOOKAHEAD(2)
+      var = Element() t = < DECR >
+    )
+    {
+      IncrementStatement i = new IncrementStatement(t.image, (Variable) var);
+      return i;
+    }
+  | 
+    var = Element() operator = AssignmentOperator() expression = Expression()
+  )
+  {
+    AssignmentStatement assign = new AssignmentStatement(operator, (Variable) var, expression);
+    return assign;
+  }
+}
+
+IfStatement IfStatement() :
+{
+  ASTExpression cond;
+  ASTStatement then;
+  ASTStatement els;
+  IfStatement i;
+}
+{
+  "if" "(" cond = Expression() ")" then = Statement()
+  [
+    LOOKAHEAD(1)
+    "else" els = Statement()
+    {
+      i = new IfStatement(cond, then, els);
+      return i;
+    }
+  ]
+  {
+    i = new IfStatement(cond, then);
+    return i;
+  }
+}
+
+ASTExpression Expression() :
+{
+  ASTExpression exp;
+}
+{
+  LOOKAHEAD(2)
+  exp = ConditionalExpression()
+  {
+    return exp;
+  }
+| 
+  exp = AdditiveExpression()
+  {
+    return exp;
+  }
+}
+
+String AssignmentOperator() :
+{
+  String operator;
+}
+{
+  (
+    "="
+    {
+      operator = "=";
+    }
+  | "*="
+    {
+      operator = "*=";
+    }
+  | "/="
+    {
+      operator = "/=";
+    }
+  | "%="
+    {
+      operator = "%=";
+    }
+  | "+="
+    {
+      operator = "+=";
+    }
+  | "-="
+    {
+      operator = "-=";
+    }
+  )
+  {
+    return operator;
+  }
+}
+
+ASTExpression ConditionalExpression() :
+{
+}
+{
+  LOOKAHEAD(2)
+  {
+    ASTExpression b;
+  }
+  b = ConditionalOrExpression()
+  {
+    return b;
+  }
+|
+  {
+    ASTExpression condition;
+    ASTExpression trueExpression;
+    ASTExpression falseExpression;
+  }
+  condition = ConditionalOrExpression() "?" trueExpression = Expression() ":" falseExpression = ConditionalExpression()
+  {
+    ConditionalExpression conditionalExpression = new ConditionalExpression((BooleanExpression) condition, trueExpression, falseExpression);
+    return conditionalExpression;
+  }
+}
+
+ASTExpression ConditionalOrExpression() :
+{
+  ASTExpression e;
+  ASTExpression newE;
+  BooleanExpression newnewE;
+}
+{
+  e = ConditionalAndExpression()
+  (
+    "||" newE = ConditionalAndExpression()
+    {
+      newnewE = new BooleanExpression();
+      newnewE.setLeft(e);
+      newnewE.setRight(newE);
+      newnewE.setOperator("||");
+      e = newnewE;
+    }
+  )*
+  {
+    return e;
+  }
+}
+
+ASTExpression ConditionalAndExpression() :
+{
+  ASTExpression e;
+  ASTExpression newE;
+  BooleanExpression newnewE;
+}
+{
+  e = EqualityExpression()
+  (
+    "&&" newE = EqualityExpression()
+    {
+      newnewE = new BooleanExpression();
+      newnewE.setLeft(e);
+      newnewE.setRight(newE);
+      newnewE.setOperator("&&");
+      e = newnewE;
+    }
+  )*
+  {
+    return e;
+  }
+}
+
+ASTExpression EqualityExpression() :
+{
+  ASTExpression left;
+  ASTExpression right = null;
+  String operator = null;
+  boolean flag = false;
+}
+{
+  left = RelationalExpression()
+  (
+    (
+      "=="
+      {
+        operator = "==";
+      }
+    | "!="
+      {
+        operator = "!=";
+      }
+    )
+    right = RelationalExpression()
+    {
+      flag = true;
+    }
+  )*
+  {
+    if (flag)
+    {
+      BooleanExpression expression = new BooleanExpression(operator, left, right);
+      return expression;
+    }
+    else
+    {
+      return left;
+    }
+  }
+}
+
+ASTExpression RelationalExpression() :
+{
+  ASTExpression left;
+  ASTExpression right = null;
+  String operator = null;
+  boolean flag = false;
+}
+{
+  left = AdditiveExpression()
+  (
+    (
+      "<"
+      {
+        operator = "<";
+      }
+    | ">"
+      {
+        operator = ">";
+      }
+    | "<="
+      {
+        operator = "<=";
+      }
+    | ">="
+      {
+        operator = ">=";
+      }
+    )
+    right = AdditiveExpression()
+    {
+      flag = true;
+    }
+  )*
+  {
+    if (flag)
+    {
+      BooleanExpression expression = new BooleanExpression(operator, left, right);
+      return expression;
+    }
+    else
+    {
+      return left;
+    }
+  }
+}
+
+ASTExpression AdditiveExpression() :
+{
+  ASTExpression e;
+  ASTExpression newE;
+  OperationExpression newnewE;
+  String operator;
+}
+{
+  e = MultiplicativeExpression()
+  (
+    (
+      "+"
+      {
+        operator = "+";
+      }
+    | "-"
+      {
+        operator = "-";
+      }
+    )
+    newE = MultiplicativeExpression()
+    {
+      newnewE = new OperationExpression();
+      newnewE.setLeft(e);
+      newnewE.setRight(newE);
+      newnewE.setOperator(operator);
+      e = newnewE;
+    }
+  )*
+  {
+    return e;
+  }
+}
+
+ASTExpression MultiplicativeExpression() :
+{
+  ASTExpression firstE;
+  OperationExpression e = null;
+  ASTExpression newE;
+  OperationExpression newnewE;
+  String operator;
+  int flag = 0;
+}
+{
+  firstE = UnaryExpression()
+  (
+    (
+      "*"
+      {
+        operator = "*";
+      }
+    | "/"
+      {
+        operator = "/";
+      }
+    | "%"
+      {
+        operator = "%";
+      }
+    )
+    newE = UnaryExpression()
+    {
+      if (flag == 0)
+      {
+        newnewE = new OperationExpression();
+        newnewE.setLeft(firstE);
+        newnewE.setRight(newE);
+        newnewE.setOperator(operator);
+        e = newnewE;
+        flag++;
+      }
+      else
+      {
+        newnewE = new OperationExpression();
+        newnewE.setLeft(e);
+        newnewE.setRight(newE);
+        newnewE.setOperator(operator);
+        e = newnewE;
+      }
+    }
+  )*
+  {
+    if (flag == 0)
+    {
+      return firstE;
+    }
+    else
+    {
+      return e;
+    }
+  }
+}
+
+ASTExpression UnaryExpression() :
+{
+  ASTExpression e;
+  Token t;
+}
+{
+  (
+    (
+      t = < PLUS >
+    | t = < MINUS >
+    )
+    e = UnaryExpression()
+    {
+      String sign;
+      sign = String.valueOf(t.image);
+      if (sign.equals("+"))
+      {
+        return e;
+      }
+      else
+      {
+        MinusExpression m = new MinusExpression(e);
+        return m;
+      }
+    }
+  | e = UnaryExpressionNotPlusMinus()
+    {
+      return e;
+    }
+  )
+}
+
+ASTExpression UnaryExpressionNotPlusMinus() :
+{
+  ASTExpression e;
+}
+{
+  "!" e = UnaryExpression()
+  {
+    NotExpression n = new NotExpression(e);
+    return n;
+  }
+| e = Element()
+  {
+    return e;
+  }
+}
+
+ASTExpression Element() :
+{
+  ASTExpression exp;
+  ASTValue value;
+  Token t;
+  int counter = 0;
+  Variable variable;
+  BaseVariable returnBase = null;
+  String name;
+  BaseVariable base = null;
+  BaseVariable newBase = null;
+}
+{
+  value = Literal()
+  {
+    return value;
+  }
+| "(" exp = Expression() ")"
+  {
+    return exp;
+  }
+| 
+  < TARGET_VALUE >
+  {
+    variable = new Variable("TargetValue");
+    return variable;
+  }
+|
+  {
+    Token type = new Token();
+    type.image = "default";
+  }
+  [
+    (
+      type = < TARGET >
+    | type = < WORKER >
+    | type = < THIS >
+    )
+    < DOT >
+  ]
+  t = < IDENTIFIER >
+  {
+    variable = new Variable(String.valueOf(t.image));
+    counter++;
+  }
+  (
+    < DOT > t = < IDENTIFIER >
+    {
+      if (counter == 1)
+      {
+        name = variable.getName();
+        variable = new Variable(String.valueOf(t.image));
+        base = new BaseVariable(name, variable);
+        returnBase = base;
+        counter++;
+      }
+      else
+      {
+        name = base.getVar().getName();
+        variable = new Variable(String.valueOf(t.image));
+        newBase = new BaseVariable(name, variable);
+        base.setVar(newBase);
+        newBase = base;
+      }
+    }
+  )*
+  {
+    TargetVariable target;
+    WorkerVariable worker;
+    ThisVariable thi;
+    if (counter == 1)
+    {
+      switch (String.valueOf(type.image))
+      {
+        case "target" : 
+        target = new TargetVariable(variable);
+        return target;
+        case "worker" : 
+        worker = new WorkerVariable(variable);
+        return worker;
+        case "this" : 
+        thi = new ThisVariable(variable);
+        return thi;
+        default : 
+        return variable;
+      }
+    }
+    else
+    {
+      switch (String.valueOf(type.image))
+      {
+        case "target" : 
+        target = new TargetVariable(returnBase);
+        return target;
+        case "worker" : 
+        target = new TargetVariable(returnBase);
+        return target;
+        case "this" : 
+        target = new TargetVariable(returnBase);
+        return target;
+        default : 
+        return returnBase;
+      }
+    }
+  }
+}
+
+ASTValue Literal() :
+{
+  ASTValue v;
+}
+{
+  (
+    {
+      Token t;
+    }
+    t = < INTEGER_LITERAL >
+    {
+      v = new IntValue(Integer.valueOf(t.image));
+    }
+  | v = BooleanLiteral()
+  )
+  {
+    return v;
+  }
+}
+
+BooleanValue BooleanLiteral() :
+{
+  BooleanValue v;
+}
+{
+  "true"
+  {
+    v = new BooleanValue(true);
+    return v;
+  }
+| "false"
+  {
+    v = new BooleanValue(false);
+    return v;
+  }
+}

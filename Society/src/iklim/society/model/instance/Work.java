@@ -30,7 +30,7 @@ public class Work extends AbstractModelInstance{
 	}
 
 	public Collection<Work> execute() {
-		// TODO execute Algorithm in Work Class
+		
 		return null;
 	}
 	
