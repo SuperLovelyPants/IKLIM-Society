@@ -2,7 +2,7 @@ package iklim.society.visitor;
 
 import java.util.LinkedList;
 
-import node.*;
+import iklim.society.node.*;
 
 public class EvaluateVisitor implements FomularScriptVisitor {
 

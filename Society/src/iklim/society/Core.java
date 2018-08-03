@@ -16,8 +16,8 @@ public class Core {
 		works = new WorkManager();
 		model = ModelReader.parseModel("./model/BaseModel.mdl");
 		
-		Collection<Work> cyclicWork = model.getCyclicWorks();
-		works.putAllCyclicWork(cyclicWork);
+		//Collection<Work> cyclicWork = model.getCyclicWorks();
+		//works.putAllCyclicWork(cyclicWork);
 		
 		
 		start();
@@ -28,10 +28,8 @@ public class Core {
 	private void start() {
 		
 		while(true) {
-			addCyclicWork();
-			doWork();
-			
-			
+			//addCyclicWork();
+			//doWork();
 		}
 		
 		

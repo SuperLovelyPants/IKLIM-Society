@@ -1,6 +1,6 @@
 package iklim.society.visitor;
 
-import node.*;
+import iklim.society.node.*;
 
 
 public interface FomularScriptVisitor {

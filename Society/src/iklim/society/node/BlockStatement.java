@@ -2,7 +2,7 @@ package iklim.society.node;
 
 import java.util.LinkedList;
 
-import visitor.FomularScriptVisitor;
+import iklim.society.visitor.FomularScriptVisitor;
 
 public class BlockStatement extends ASTStatement {
 

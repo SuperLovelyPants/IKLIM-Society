@@ -1,6 +1,6 @@
 package iklim.society.node;
 
-import visitor.FomularScriptVisitor;
+import iklim.society.visitor.FomularScriptVisitor;
 
 public class IncrementStatement extends ASTStatement{
 	private boolean sign;

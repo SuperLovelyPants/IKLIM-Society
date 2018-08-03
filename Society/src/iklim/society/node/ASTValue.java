@@ -1,6 +1,6 @@
 package iklim.society.node;
 
-import visitor.FomularScriptVisitor;
+import iklim.society.visitor.FomularScriptVisitor;
 
 public abstract class ASTValue extends ASTExpression{
 	

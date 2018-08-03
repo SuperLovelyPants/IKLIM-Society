@@ -7,9 +7,9 @@ options
 }
 
 PARSER_BEGIN(MyNewGrammar)
-package javaCC;
-import node.*;
-import visitor.*;
+package iklim.society.parser;
+import iklim.society.node.*;
+import iklim.society.visitor.*;
 import java.util.LinkedList;
 
 public class MyNewGrammar
