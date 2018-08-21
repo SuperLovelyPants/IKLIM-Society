@@ -62,7 +62,7 @@ public class ModelManager {
 		modelStructure = new HashMap<String, BaseStructure>();
 		modelAgent = new HashMap<String, BaseAgent>();
 		
-		modelAll = new HashMap<String, AbstractBaseModel>(); 
+		modelAll = new HashMap<String, AbstractBaseModel>();
 		
 		initialize();
 		
@@ -166,6 +166,9 @@ public class ModelManager {
 		modelAll.put(r.getId(), r);
 	}
 
+	public Structure getStructure(String structureId) {
+		return instanceStructure.get(structureId);
+	}
 	
 	public Rule getRule(String ruleId) {
 		return modelRule.get(ruleId);
@@ -199,113 +202,12 @@ public class ModelManager {
 		return instanceInventory.get(inventoryId);
 	}
 	
-	public String getInstanceType(String instanceId) {
-		return instanceAll.get(instanceId).getType();
+	public AbstractModelInstance getInstance(String instanceId) {
+		return instanceAll.get(instanceId);
 	}
 	
-	//getters & setters------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-	public HashMap<String, Agent> getInstanceAgent() {
-		return instanceAgent;
-	}
-
-	public void setInstanceAgent(HashMap<String, Agent> instanceAgent) {
-		this.instanceAgent = instanceAgent;
-	}
-
-	public HashMap<String, Structure> getInstanceStructure() {
-		return instanceStructure;
-	}
-
-	public void setInstanceStructure(HashMap<String, Structure> instanceStructure) {
-		this.instanceStructure = instanceStructure;
-	}
-
-	public HashMap<String, PropertySet> getInstancePropertySet() {
-		return instancePropertySet;
-	}
-
-	public void setInstancePropertySet(HashMap<String, PropertySet> instancePropertySet) {
-		this.instancePropertySet = instancePropertySet;
-	}
-
-	public HashMap<String, Item> getInstanceItem() {
-		return instanceItem;
-	}
-
-	public void setInstanceItem(HashMap<String, Item> instanceItem) {
-		this.instanceItem = instanceItem;
-	}
-
-	public HashMap<String, Inventory> getInstanceInventory() {
-		return instanceInventory;
-	}
-
-	public void setInstanceInventory(HashMap<String, Inventory> instanceInventory) {
-		this.instanceInventory = instanceInventory;
-	}
-
-	public HashMap<String, BasePropertySet> getModelPropertySet() {
-		return modelPropertySet;
-	}
-
-	public void setModelPropertySet(HashMap<String, BasePropertySet> modelPropertySet) {
-		this.modelPropertySet = modelPropertySet;
-	}
-
-	public HashMap<String, BaseCapabilityProperty> getModelCapabilityProperty() {
-		return modelCapabilityProperty;
-	}
-
-	public void setModelCapabilityProperty(HashMap<String, BaseCapabilityProperty> modelCapabilityProperty) {
-		this.modelCapabilityProperty = modelCapabilityProperty;
-	}
-
-	public HashMap<String, BaseState> getModelState() {
-		return modelState;
-	}
-
-	public void setModelState(HashMap<String, BaseState> modelState) {
-		this.modelState = modelState;
-	}
-
-	public HashMap<String, BaseWork> getModelWork() {
-		return modelWork;
-	}
-
-	public void setModelWork(HashMap<String, BaseWork> modelWork) {
-		this.modelWork = modelWork;
-	}
-
-	public HashMap<String, Rule> getModelRule() {
-		return modelRule;
-	}
-
-	public void setModelRule(HashMap<String, Rule> modelRule) {
-		this.modelRule = modelRule;
-	}
-
-	public HashMap<String, BaseItem> getModelItem() {
-		return modelItem;
-	}
-
-	public void setModelItem(HashMap<String, BaseItem> modelItem) {
-		this.modelItem = modelItem;
-	}
-
-	public HashMap<String, BaseStructure> getModelStructure() {
-		return modelStructure;
-	}
-
-	public void setModelStructure(HashMap<String, BaseStructure> modelStructure) {
-		this.modelStructure = modelStructure;
-	}
-
-	public HashMap<String, BaseAgent> getModelAgent() {
-		return modelAgent;
-	}
-
-	public void setModelAgent(HashMap<String, BaseAgent> modelAgent) {
-		this.modelAgent = modelAgent;
+	public String getInstanceType(String instanceId) {
+		return instanceAll.get(instanceId).getType();
 	}
 	
 }

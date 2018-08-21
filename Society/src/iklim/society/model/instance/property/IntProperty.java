@@ -2,12 +2,12 @@ package iklim.society.model.instance.property;
 
 import iklim.society.model.ModelScheme;
 
-public class intProperty extends PropertyInstance {
+public class IntProperty extends PropertyInstance {
 
 	private int maxValue;
 	private int minValue;
 	
-	public intProperty(String name, Object value) {
+	public IntProperty(String name, Object value) {
 		super(name, ModelScheme.ValueIntValue, (int)value);
 	}
 

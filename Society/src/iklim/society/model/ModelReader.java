@@ -5,8 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.LinkedList;
-
-import javax.management.modelmbean.ModelMBeanInfoSupport;
+import java.util.Set;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -15,7 +14,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
-import iklim.society.model.base.AbstractCapable;
 import iklim.society.model.base.BaseCapabilityProperty;
 import iklim.society.model.base.BaseItem;
 import iklim.society.model.base.BasePropertySet;
@@ -27,15 +25,13 @@ import iklim.society.model.base.rule.Rule;
 import iklim.society.model.base.utility.Precondition;
 import iklim.society.model.instance.AbstractCapableInstance;
 import iklim.society.model.instance.AbstractMaterialInstance;
-import iklim.society.model.instance.AbstractModelInstance;
 import iklim.society.model.instance.Agent;
 import iklim.society.model.instance.Inventory;
 import iklim.society.model.instance.Item;
 import iklim.society.model.instance.PropertySet;
 import iklim.society.model.instance.Structure;
-import iklim.society.model.instance.argument.Argument;
-import iklim.society.model.instance.argument.IndividualArgument;
-import iklim.society.model.instance.property.PropertyInstance;
+import iklim.society.model.instance.property.InstanceProperty;
+import iklim.society.model.instance.property.IntProperty;
 
 public class ModelReader {
 
@@ -55,11 +51,11 @@ public class ModelReader {
 
 			buildPropertySet(root.get(ModelScheme.ObjectPropertySet).getAsJsonArray(), manager);
 			buildState(root.get(ModelScheme.ObjectState).getAsJsonArray(), manager);
-			
+
 			buildRule(root.get(ModelScheme.ObjectRule).getAsJsonArray(), manager, workArgumentBuffer);
 			buildWork(root.get(ModelScheme.ObjectWork).getAsJsonArray(), manager, ruleEffectWorkBuffer);
 			buildCapabilityProperty(root.get(ModelScheme.ObjectCapabilityProperty).getAsJsonArray(), manager);
-			
+
 			buildItem(root.get(ModelScheme.ObjectItem).getAsJsonArray(), manager);
 			buildStructure(root.get(ModelScheme.ObjectStructure).getAsJsonArray(), manager);
 
@@ -299,31 +295,37 @@ public class ModelReader {
 		buildItemInstance(joInstance.get(ModelScheme.ObjectItem).getAsJsonArray(), manager);
 
 	}
-	
+
 	private static void setCapabilityProperties(JsonObject object, AbstractCapableInstance instance) {
-		JsonArray workerCapabilityPropertyArray = object.get(ModelScheme.PropertyWorkerCapability)
-				.getAsJsonArray();
+		JsonArray workerCapabilityPropertyArray = object.get(ModelScheme.PropertyWorkerCapability).getAsJsonArray();
 		for (JsonElement workerCapabilityElement : workerCapabilityPropertyArray) {
 			instance.addWorkerCapability(workerCapabilityElement.getAsString());
 		}
 
-		JsonArray targetCapabilityPropertyArray = object.get(ModelScheme.PropertyTargetCapability)
-				.getAsJsonArray();
+		JsonArray targetCapabilityPropertyArray = object.get(ModelScheme.PropertyTargetCapability).getAsJsonArray();
 		for (JsonElement targetCapabilityElement : targetCapabilityPropertyArray) {
 			instance.addTargetCapability(targetCapabilityElement.getAsString());
 		}
 	}
-	
+
 	private static void setPropertySet(JsonObject object, AbstractMaterialInstance instance) {
 		JsonArray propertySetArray = object.get(ModelScheme.PropertyHasProperties).getAsJsonArray();
 		for (JsonElement propertySetElement : propertySetArray) {
-			if (ModelManager.getInstance().getInstanceType(propertySetElement.getAsString()).equals("Inventory")) {// 지금으로썬 모든 인벤토리 객체의 타입은 인벤토리이므로, 이 편이 편하다
+			if (ModelManager.getInstance().getInstanceType(propertySetElement.getAsString()).equals("Inventory")) {// 지금으로썬
+																													// 모든
+																													// 인벤토리
+																													// 객체의
+																													// 타입은
+																													// 인벤토리이므로,
+																													// 이
+																													// 편이
+																													// 편하다
 				instance.setInventory(propertySetElement.getAsString());
 			} else {
 				instance.addPropertySet(propertySetElement.getAsString());
 			}
 		}
-		
+
 		JsonArray statePropertyArray = object.get(ModelScheme.PropertyHasStateProperties).getAsJsonArray();
 		for (JsonElement statePropertyElement : statePropertyArray) {
 			instance.addStateProperty(statePropertyElement.getAsString());
@@ -350,10 +352,10 @@ public class ModelReader {
 			String id = structureObject.get(ModelScheme.PropertyID).getAsString();
 			String type = structureObject.get(ModelScheme.PropertyType).getAsString();
 			Structure structure = new Structure(id, type);
-			
+
 			setCapabilityProperties(structureObject, structure);
 			setPropertySet(structureObject, structure);
-			
+
 			manager.addStructureInstance(structure);
 		}
 	}
@@ -364,10 +366,10 @@ public class ModelReader {
 			String id = itemObject.get(ModelScheme.PropertyID).getAsString();
 			String type = itemObject.get(ModelScheme.PropertyType).getAsString();
 			Item item = new Item(id, type);
-			
+
 			setCapabilityProperties(itemObject, item);
 			setPropertySet(itemObject, item);
-			
+
 			manager.addItemInstance(item);
 		}
 	}
@@ -378,7 +380,7 @@ public class ModelReader {
 			String id = invnetoryObject.get(ModelScheme.PropertyID).getAsString();
 			String type = invnetoryObject.get(ModelScheme.PropertyType).getAsString();
 			Inventory inventory = new Inventory(id, type);
-			
+
 			manager.addInventoryInstance(inventory);
 		}
 	}
@@ -389,7 +391,25 @@ public class ModelReader {
 			String id = propertySetObject.get(ModelScheme.PropertyID).getAsString();
 			String type = propertySetObject.get(ModelScheme.PropertyType).getAsString();
 			PropertySet propertySet = new PropertySet(id, type);
-			
+
+			JsonArray properties = propertySetObject.get(ModelScheme.PropertyProperties).getAsJsonArray();
+			for (JsonElement jsonElement : properties) {
+				JsonObject propertyObject = jsonElement.getAsJsonObject();
+				switch (propertyObject.get(ModelScheme.PropertyType).getAsString()) {
+				case "integer":
+					IntProperty intP = new IntProperty(propertyObject.get(ModelScheme.PropertyName).getAsString(),
+							propertyObject.get(ModelScheme.PropertyValue).getAsInt());
+					propertySet.addProperty(intP);
+					break;
+				case "item":
+					Item item = (Item) manager.getInstance(propertyObject.get(ModelScheme.PropertyValue).getAsString());
+					InstanceProperty insP = new InstanceProperty(
+							propertyObject.get(ModelScheme.PropertyName).getAsString(), item);
+					propertySet.addProperty(insP);
+					break;
+				}
+			}
+
 			manager.addPropertySetInstance(propertySet);
 		}
 	}

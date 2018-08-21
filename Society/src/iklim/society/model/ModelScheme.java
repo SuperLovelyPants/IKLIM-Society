@@ -68,4 +68,5 @@ public class ModelScheme {
 	public static final String ValueIntValue 				= "intValue";
 	public static final String ValueStringValue				= "stringValue";
 	public static final String ValueFormulaValue			= "formulaValue";
+	public static final String ValueInstance				= "instance";
 }

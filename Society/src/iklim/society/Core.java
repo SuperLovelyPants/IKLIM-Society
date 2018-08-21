@@ -5,12 +5,18 @@ import java.util.HashMap;
 
 import iklim.society.model.ModelManager;
 import iklim.society.model.ModelReader;
+import iklim.society.model.base.BaseWork;
+import iklim.society.model.base.utility.Precondition;
 import iklim.society.model.instance.Work;
+import iklim.society.parser.MyNewGrammar;
+import iklim.society.visitor.EvaluateVisitor;
 
 public class Core {
 	private ModelManager 		model;
 	private WorkExecutor		executor;
 	private WorkManager			works;
+	
+	public static MyNewGrammar parser = null;
 	
 	public Core() {
 		works = new WorkManager();
@@ -19,7 +25,6 @@ public class Core {
 		//Collection<Work> cyclicWork = model.getCyclicWorks();
 		//works.putAllCyclicWork(cyclicWork);
 		
-		
 		start();
 	}
 
@@ -27,15 +32,19 @@ public class Core {
 
 	private void start() {
 		
-		while(true) {
-			//addCyclicWork();
-			//doWork();
-		}
+//		while(true) {
+//			addCyclicWork();
+//			doWork();
+//		}
 		
+		ModelManager manager = ModelManager.getInstance();
 		
+		EvaluateVisitor visitor = new EvaluateVisitor();
+		visitor.setTarget(manager.getStructure("FarmLand001"));
 		
+		BaseWork baseWork = manager.getWork("PlantingWork");
 		
-		
+		manager.getRule("CultivatingRule").getTargetValue().accept(visitor);
 		
 //		while(true){
 //			testWork();

@@ -6,6 +6,7 @@ import java.util.LinkedList;
 
 import iklim.society.model.ModelManager;
 import iklim.society.model.base.BaseCapabilityProperty;
+import iklim.society.model.instance.property.PropertyInstance;
 
 public class AbstractCapableInstance extends AbstractMaterialInstance{
 
@@ -35,6 +36,17 @@ public class AbstractCapableInstance extends AbstractMaterialInstance{
 	public void addTargetCapability(String capabilityId) {
 		BaseCapabilityProperty baseCapabilityProperty = ModelManager.getInstance().getCapabilityProperty(capabilityId);
 		targetCapability.put(baseCapabilityProperty.getId(), baseCapabilityProperty);
+	}
+
+	public PropertySet getProperty(String name) {
+		Collection<PropertySet> properties = this.getHasProperties().values();
+		for (PropertySet propertySet : properties) {
+			if(propertySet.getType().equals(name)) {
+				return propertySet;
+			}
+		}
+		
+		return null;
 	}
 	
 	

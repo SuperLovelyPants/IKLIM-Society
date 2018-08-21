@@ -1,14 +1,23 @@
 package iklim.society.model.base.rule;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import javax.swing.text.html.HTMLDocument.BlockElement;
+
+import iklim.society.Core;
 import iklim.society.model.base.AbstractBaseModel;
 import iklim.society.model.base.AbstractExecutable;
 import iklim.society.model.base.utility.Precondition;
 import iklim.society.model.instance.Work;
 import iklim.society.model.instance.argument.Argument;
+import iklim.society.node.BlockStatement;
+import iklim.society.node.Variable;
+import iklim.society.parser.MyNewGrammar;
 
 public class Rule extends AbstractExecutable{
 	private LinkedList<String>					effectWorks;
@@ -17,7 +26,7 @@ public class Rule extends AbstractExecutable{
 	private LinkedList<RuleFactor>				factors;
 	private Evaluator							evaluator;
 	
-	private String								targetValue;
+	private BlockStatement							targetValue;
 	private LinkedList<String>					trigger;
 
 	public Rule() {
@@ -53,12 +62,25 @@ public class Rule extends AbstractExecutable{
 		return effectWorks;
 	}
 	
-	public String getTargetValue() {
+	public BlockStatement getTargetValue() {
 		return targetValue;
 	}
 
 	public void setTargetValue(String targetValue) {
-		this.targetValue = targetValue;
+		InputStream stream = new ByteArrayInputStream(targetValue.getBytes(StandardCharsets.UTF_8));
+		if(Core.parser == null) {
+			Core.parser = new MyNewGrammar(stream);
+		} else {
+			Core.parser.ReInit(stream);
+		}
+		
+		try {
+			this.targetValue = (BlockStatement)MyNewGrammar.Component();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		} catch (Error e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 	public LinkedList<String> getEffectWorks() {

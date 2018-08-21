@@ -176,7 +176,11 @@ ASTStatement Statement() :
   (
     statement = Block()
   | statement = IfStatement()
-  | statement = StatementExpression() ";"
+  | LOOKAHEAD(Element() (< INCR >
+  | < DECR >
+  | AssignmentOperator()))
+    statement = StatementExpression() ";"
+  | statement = Expression() [ ";" ]
   )
   {
     return statement;
@@ -214,21 +218,21 @@ ASTStatement StatementExpression() :
   ASTExpression expression;
 }
 {
+  LOOKAHEAD(Element() (< INCR >
+| < DECR >))
+  var = Element()
   (
-    LOOKAHEAD(2)
-    (
-      LOOKAHEAD(2)
-      var = Element() t = < INCR >
-    | LOOKAHEAD(2)
-      var = Element() t = < DECR >
-    )
-    {
-      IncrementStatement i = new IncrementStatement(t.image, (Variable) var);
-      return i;
-    }
+    t = < INCR >
   | 
-    var = Element() operator = AssignmentOperator() expression = Expression()
+    t = < DECR >
   )
+  {
+    IncrementStatement i = new IncrementStatement(t.image, (Variable) var);
+    return i;
+  }
+| 
+  LOOKAHEAD(Element() AssignmentOperator())
+  var = Element() operator = AssignmentOperator() expression = Expression()
   {
     AssignmentStatement assign = new AssignmentStatement(operator, (Variable) var, expression);
     return assign;
@@ -269,7 +273,7 @@ ASTExpression Expression() :
     return exp;
   }
 | 
-  exp = AdditiveExpression()
+  exp = ConditionalOrExpression()
   {
     return exp;
   }
@@ -338,22 +342,19 @@ ASTExpression ConditionalExpression() :
 
 ASTExpression ConditionalOrExpression() :
 {
+  BooleanExpression be;
   ASTExpression e;
-  ASTExpression newE;
-  BooleanExpression newnewE;
+  ASTExpression left;
+  ASTExpression right;
 }
 {
-  e = ConditionalAndExpression()
-  (
-    "||" newE = ConditionalAndExpression()
-    {
-      newnewE = new BooleanExpression();
-      newnewE.setLeft(e);
-      newnewE.setRight(newE);
-      newnewE.setOperator("||");
-      e = newnewE;
-    }
-  )*
+  LOOKAHEAD(ConditionalAndExpression() "||")
+  left = ConditionalAndExpression() "||" right = ConditionalOrExpression()
+  {
+    be = new BooleanExpression("||", left, right);
+    return be;
+  }
+| e = ConditionalAndExpression()
   {
     return e;
   }
@@ -361,22 +362,20 @@ ASTExpression ConditionalOrExpression() :
 
 ASTExpression ConditionalAndExpression() :
 {
+  BooleanExpression be;
   ASTExpression e;
-  ASTExpression newE;
-  BooleanExpression newnewE;
+  ASTExpression left;
+  ASTExpression right;
 }
 {
+  LOOKAHEAD(EqualityExpression() "&&")
+  left = EqualityExpression() "&&" right = ConditionalAndExpression()
+  {
+    be = new BooleanExpression("&&", left, right);
+    return be;
+  }
+| 
   e = EqualityExpression()
-  (
-    "&&" newE = EqualityExpression()
-    {
-      newnewE = new BooleanExpression();
-      newnewE.setLeft(e);
-      newnewE.setRight(newE);
-      newnewE.setOperator("&&");
-      e = newnewE;
-    }
-  )*
   {
     return e;
   }
@@ -384,178 +383,157 @@ ASTExpression ConditionalAndExpression() :
 
 ASTExpression EqualityExpression() :
 {
-  ASTExpression left;
-  ASTExpression right = null;
-  String operator = null;
-  boolean flag = false;
-}
-{
-  left = RelationalExpression()
-  (
-    (
-      "=="
-      {
-        operator = "==";
-      }
-    | "!="
-      {
-        operator = "!=";
-      }
-    )
-    right = RelationalExpression()
-    {
-      flag = true;
-    }
-  )*
-  {
-    if (flag)
-    {
-      BooleanExpression expression = new BooleanExpression(operator, left, right);
-      return expression;
-    }
-    else
-    {
-      return left;
-    }
-  }
-}
-
-ASTExpression RelationalExpression() :
-{
-  ASTExpression left;
-  ASTExpression right = null;
-  String operator = null;
-  boolean flag = false;
-}
-{
-  left = AdditiveExpression()
-  (
-    (
-      "<"
-      {
-        operator = "<";
-      }
-    | ">"
-      {
-        operator = ">";
-      }
-    | "<="
-      {
-        operator = "<=";
-      }
-    | ">="
-      {
-        operator = ">=";
-      }
-    )
-    right = AdditiveExpression()
-    {
-      flag = true;
-    }
-  )*
-  {
-    if (flag)
-    {
-      BooleanExpression expression = new BooleanExpression(operator, left, right);
-      return expression;
-    }
-    else
-    {
-      return left;
-    }
-  }
-}
-
-ASTExpression AdditiveExpression() :
-{
+  BooleanExpression be;
   ASTExpression e;
-  ASTExpression newE;
-  OperationExpression newnewE;
+  ASTExpression left;
+  ASTExpression right;
   String operator;
 }
 {
-  e = MultiplicativeExpression()
-  (
-    (
-      "+"
-      {
-        operator = "+";
-      }
-    | "-"
-      {
-        operator = "-";
-      }
-    )
-    newE = MultiplicativeExpression()
-    {
-      newnewE = new OperationExpression();
-      newnewE.setLeft(e);
-      newnewE.setRight(newE);
-      newnewE.setOperator(operator);
-      e = newnewE;
-    }
-  )*
+  LOOKAHEAD(RelationalExpression() EqualityOperator())
+  left = RelationalExpression() operator = EqualityOperator() right = EqualityExpression()
+  {
+    be = new BooleanExpression(operator, left, right);
+    return be;
+  }
+| 
+  e = RelationalExpression()
   {
     return e;
   }
 }
 
-ASTExpression MultiplicativeExpression() :
+String EqualityOperator() :
 {
-  ASTExpression firstE;
-  OperationExpression e = null;
-  ASTExpression newE;
-  OperationExpression newnewE;
-  String operator;
-  int flag = 0;
 }
 {
-  firstE = UnaryExpression()
-  (
-    (
-      "*"
-      {
-        operator = "*";
-      }
-    | "/"
-      {
-        operator = "/";
-      }
-    | "%"
-      {
-        operator = "%";
-      }
-    )
-    newE = UnaryExpression()
-    {
-      if (flag == 0)
-      {
-        newnewE = new OperationExpression();
-        newnewE.setLeft(firstE);
-        newnewE.setRight(newE);
-        newnewE.setOperator(operator);
-        e = newnewE;
-        flag++;
-      }
-      else
-      {
-        newnewE = new OperationExpression();
-        newnewE.setLeft(e);
-        newnewE.setRight(newE);
-        newnewE.setOperator(operator);
-        e = newnewE;
-      }
-    }
-  )*
+  "=="
   {
-    if (flag == 0)
-    {
-      return firstE;
-    }
-    else
-    {
-      return e;
-    }
+    return "==";
+  }
+| "!="
+  {
+    return "!=";
+  }
+}
+
+ASTExpression RelationalExpression() :
+{
+  BooleanExpression be;
+  ASTExpression e;
+  ASTExpression left;
+  ASTExpression right;
+  String operator;
+}
+{
+  LOOKAHEAD(AdditiveExpression() RelationalOperator())
+  left = AdditiveExpression() operator = RelationalOperator() right = RelationalExpression()
+  {
+    be = new BooleanExpression(operator, left, right);
+    return be;
+  }
+| 
+  e = AdditiveExpression()
+  {
+    return e;
+  }
+}
+
+String RelationalOperator() :
+{
+}
+{
+  "<"
+  {
+    return "<";
+  }
+| ">"
+  {
+    return ">";
+  }
+| "<="
+  {
+    return "<=";
+  }
+| ">="
+  {
+    return ">=";
+  }
+}
+
+ASTExpression AdditiveExpression() :
+{
+  OperationExpression ope;
+  ASTExpression e;
+  ASTExpression left;
+  ASTExpression right;
+  String operator;
+}
+{
+  LOOKAHEAD(MultiplicativeExpression() AdditiveOperator())
+  left = MultiplicativeExpression() operator = AdditiveOperator() right = AdditiveExpression()
+  {
+    ope = new OperationExpression(operator, left, right);
+    return ope;
+  }
+| 
+  e = MultiplicativeExpression()
+  {
+    return e;
+  }
+}
+
+String AdditiveOperator() :
+{
+}
+{
+  "+"
+  {
+    return "+";
+  }
+| "-"
+  {
+    return "-";
+  }
+}
+
+ASTExpression MultiplicativeExpression() :
+{
+  OperationExpression ope;
+  ASTExpression e;
+  ASTExpression left;
+  ASTExpression right;
+  String operator;
+}
+{
+  LOOKAHEAD(UnaryExpression() MultiplicativeOperator())
+  left = UnaryExpression() operator = MultiplicativeOperator() right = MultiplicativeExpression()
+  {
+    ope = new OperationExpression(operator, left, right);
+    return ope;
+  }
+| 
+  e = UnaryExpression()
+  {
+    return e;
+  }
+}
+
+String MultiplicativeOperator() :
+{
+}
+{
+  "*"
+  {
+    return "*";
+  }
+| "/"
+  {
+    return "/";
+  }
+| "%"
+  {
+    return "%";
   }
 }
 
@@ -566,29 +544,27 @@ ASTExpression UnaryExpression() :
 }
 {
   (
-    (
-      t = < PLUS >
-    | t = < MINUS >
-    )
-    e = UnaryExpression()
-    {
-      String sign;
-      sign = String.valueOf(t.image);
-      if (sign.equals("+"))
-      {
-        return e;
-      }
-      else
-      {
-        MinusExpression m = new MinusExpression(e);
-        return m;
-      }
-    }
-  | e = UnaryExpressionNotPlusMinus()
+    t = < PLUS >
+  | t = < MINUS >
+  )
+  e = UnaryExpression()
+  {
+    String sign;
+    sign = String.valueOf(t.image);
+    if (sign.equals("+"))
     {
       return e;
     }
-  )
+    else
+    {
+      MinusExpression m = new MinusExpression(e);
+      return m;
+    }
+  }
+| e = UnaryExpressionNotPlusMinus()
+  {
+    return e;
+  }
 }
 
 ASTExpression UnaryExpressionNotPlusMinus() :
@@ -611,13 +587,7 @@ ASTExpression Element() :
 {
   ASTExpression exp;
   ASTValue value;
-  Token t;
-  int counter = 0;
   Variable variable;
-  BaseVariable returnBase = null;
-  String name;
-  BaseVariable base = null;
-  BaseVariable newBase = null;
 }
 {
   value = Literal()
@@ -634,83 +604,56 @@ ASTExpression Element() :
     variable = new Variable("TargetValue");
     return variable;
   }
-|
+| 
+  variable = Variable()
   {
-    Token type = new Token();
-    type.image = "default";
+    return variable;
   }
-  [
-    (
-      type = < TARGET >
-    | type = < WORKER >
-    | type = < THIS >
-    )
-    < DOT >
-  ]
+}
+
+Variable Variable() :
+{
+  Variable variable;
+  BaseVariable base;
+  String name;
+}
+{
+  LOOKAHEAD(2)
+  name = VariableElement() < DOT > variable = Variable()
+  {
+    base = new BaseVariable(name, variable);
+    return base;
+  }
+| 
+  name = VariableElement()
+  {
+    variable = new Variable(name);
+    return variable;
+  }
+}
+
+String VariableElement() :
+{
+}
+{
+  {
+    Token t;
+  }
   t = < IDENTIFIER >
   {
-    variable = new Variable(String.valueOf(t.image));
-    counter++;
+    return t.image;
   }
-  (
-    < DOT > t = < IDENTIFIER >
-    {
-      if (counter == 1)
-      {
-        name = variable.getName();
-        variable = new Variable(String.valueOf(t.image));
-        base = new BaseVariable(name, variable);
-        returnBase = base;
-        counter++;
-      }
-      else
-      {
-        name = base.getVar().getName();
-        variable = new Variable(String.valueOf(t.image));
-        newBase = new BaseVariable(name, variable);
-        base.setVar(newBase);
-        newBase = base;
-      }
-    }
-  )*
+| < WORKER >
   {
-    TargetVariable target;
-    WorkerVariable worker;
-    ThisVariable thi;
-    if (counter == 1)
-    {
-      switch (String.valueOf(type.image))
-      {
-        case "target" : 
-        target = new TargetVariable(variable);
-        return target;
-        case "worker" : 
-        worker = new WorkerVariable(variable);
-        return worker;
-        case "this" : 
-        thi = new ThisVariable(variable);
-        return thi;
-        default : 
-        return variable;
-      }
-    }
-    else
-    {
-      switch (String.valueOf(type.image))
-      {
-        case "target" : 
-        target = new TargetVariable(returnBase);
-        return target;
-        case "worker" : 
-        target = new TargetVariable(returnBase);
-        return target;
-        case "this" : 
-        target = new TargetVariable(returnBase);
-        return target;
-        default : 
-        return returnBase;
-      }
-    }
+    return "worker";
+  }
+| < TARGET >
+  {
+    return "target";
+  }
+| < THIS >
+  {
+    return "this";
   }
 }
 
@@ -750,3 +693,4 @@ BooleanValue BooleanLiteral() :
     return v;
   }
 }
+

@@ -14,6 +14,5 @@ public class Agent extends AbstractCapableInstance {
 		super(id, type);
 		// TODO Auto-generated constructor stub
 	}
-
 	
 }

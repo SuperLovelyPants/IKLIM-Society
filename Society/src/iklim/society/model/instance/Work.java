@@ -6,26 +6,29 @@ import iklim.society.model.ModelManager;
 import iklim.society.model.base.BaseWork;
 
 public class Work extends AbstractModelInstance{
-	private final String workType;
-	private final String worker;
-	private final String target;
+	private final BaseWork workType;
+	private final AbstractCapableInstance worker;
+	private final AbstractCapableInstance target;
 	
 	public Work(String id, String workType, String worker, String target) {
 		super(id, "Work");
-		this.workType = workType;
-		this.worker = worker;
-		this.target = target;
+		
+		ModelManager manager = ModelManager.getInstance();
+		
+		this.workType = manager.getWork(workType);
+		this.worker = (AbstractCapableInstance)manager.getInstance(worker);
+		this.target = (AbstractCapableInstance)manager.getInstance(target);
 	}
 
-	public String getWorkType() {
+	public BaseWork getWorkType() {
 		return workType;
 	}
 
-	public String getWorker() {
+	public AbstractCapableInstance getWorker() {
 		return worker;
 	}
 
-	public String getTarget() {
+	public AbstractCapableInstance getTarget() {
 		return target;
 	}
 
@@ -33,6 +36,5 @@ public class Work extends AbstractModelInstance{
 		
 		return null;
 	}
-	
 	
 }
